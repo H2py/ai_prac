@@ -23,6 +23,7 @@ if __name__ == "__main__":
     print("\n간단한 계산기 프로그램:")
     while True:
         try:
+            error
             print("\n1. 덧셈")
             print("2. 뺄셈") 
             print("3. 곱셈")
