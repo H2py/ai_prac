@@ -1,0 +1,283 @@
+{
+  "media": {
+    "audio_file": "test.wav",
+    "duration": 10,
+    "sample_rate": 16000,
+    "channels": 1,
+    "language": "en",
+    "timestamp": "2025-08-28T20:16:37.946426",
+    "standards": {
+      "speech_api": "W3C Web Speech API 1.0",
+      "timed_text": "SMPTE ST 2052-1:2013",
+      "phonetic": "IPA (International Phonetic Alphabet)",
+      "emotion": "PAD (Pleasure-Arousal-Dominance) model"
+    }
+  },
+  "diarization": {
+    "turns": [
+      {
+        "segment_id": "seg_0001",
+        "start": 0,
+        "end": 5,
+        "speaker": "speaker_1",
+        "confidence": 0.9
+      },
+      {
+        "segment_id": "seg_0002",
+        "start": 5,
+        "end": 10,
+        "speaker": "speaker_2",
+        "confidence": 0.85
+      }
+    ],
+    "speakers": {
+      "speaker_1": {
+        "id": "speaker_1",
+        "total_duration": 10,
+        "speaking_percentage": 60,
+        "segment_count": 0,
+        "average_confidence": 0
+      },
+      "speaker_2": {
+        "id": "speaker_2",
+        "total_duration": 8,
+        "speaking_percentage": 40,
+        "segment_count": 0,
+        "average_confidence": 0
+      }
+    }
+  },
+  "asr": {
+    "utterances": [
+      {
+        "segment_id": "seg_0001",
+        "speaker": "speaker_1",
+        "start": 0,
+        "end": 5,
+        "text": "Hello world",
+        "confidence": 0.95,
+        "language": "en",
+        "words": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "word": "Hello",
+            "confidence": 0.8,
+            "phones": [
+              {
+                "p": "h",
+                "t": 0
+              },
+              {
+                "p": "ɛ",
+                "t": 0.1
+              },
+              {
+                "p": "l",
+                "t": 0.2
+              },
+              {
+                "p": "oʊ",
+                "t": 0.30000000000000004
+              }
+            ],
+            "pitch_hz": 180,
+            "volume_db": 0
+          },
+          {
+            "start": 2.5,
+            "end": 5.0,
+            "word": "world",
+            "confidence": 0.8,
+            "phones": [
+              {
+                "p": "w",
+                "t": 0
+              },
+              {
+                "p": "ɜː",
+                "t": 0.1
+              },
+              {
+                "p": "ɹ",
+                "t": 0.2
+              },
+              {
+                "p": "l",
+                "t": 0.30000000000000004
+              },
+              {
+                "p": "d",
+                "t": 0.4
+              }
+            ],
+            "pitch_hz": 180,
+            "volume_db": 0
+          }
+        ]
+      },
+      {
+        "segment_id": "seg_0002",
+        "speaker": "speaker_2",
+        "start": 5,
+        "end": 10,
+        "text": "How are you",
+        "confidence": 0.92,
+        "language": "en",
+        "words": [
+          {
+            "start": 5,
+            "end": 6.666666666666667,
+            "word": "How",
+            "confidence": 0.8,
+            "phones": [
+              {
+                "p": "h",
+                "t": 0
+              },
+              {
+                "p": "o",
+                "t": 0.1
+              },
+              {
+                "p": "w",
+                "t": 0.2
+              }
+            ],
+            "pitch_hz": 200,
+            "volume_db": 0
+          },
+          {
+            "start": 6.666666666666667,
+            "end": 8.333333333333334,
+            "word": "are",
+            "confidence": 0.8,
+            "phones": [
+              {
+                "p": "a",
+                "t": 0
+              },
+              {
+                "p": "r",
+                "t": 0.1
+              },
+              {
+                "p": "e",
+                "t": 0.2
+              }
+            ],
+            "pitch_hz": 200,
+            "volume_db": 0
+          },
+          {
+            "start": 8.333333333333334,
+            "end": 10.0,
+            "word": "you",
+            "confidence": 0.8,
+            "phones": [
+              {
+                "p": "j",
+                "t": 0
+              },
+              {
+                "p": "uː",
+                "t": 0.1
+              }
+            ],
+            "pitch_hz": 200,
+            "volume_db": 0
+          }
+        ]
+      }
+    ]
+  },
+  "prosody": {
+    "segments": [
+      {
+        "start": 0,
+        "end": 5,
+        "pitch": {
+          "mean_hz": 180,
+          "std_hz": 20,
+          "min_hz": 150,
+          "max_hz": 200,
+          "contour": "rising"
+        },
+        "intensity": {
+          "mean_db": 0,
+          "max_db": 0
+        },
+        "speech_rate": {
+          "syllables_per_second": 4.0
+        },
+        "voice_quality": {}
+      },
+      {
+        "start": 5,
+        "end": 10,
+        "pitch": {
+          "mean_hz": 200,
+          "std_hz": 25,
+          "min_hz": 170,
+          "max_hz": 230,
+          "contour": "rising"
+        },
+        "intensity": {
+          "mean_db": 0,
+          "max_db": 0
+        },
+        "speech_rate": {
+          "syllables_per_second": 4.0
+        },
+        "voice_quality": {}
+      }
+    ]
+  },
+  "emotions": {
+    "segments": []
+  },
+  "indices": {
+    "speaker_index": {
+      "speaker_1": [
+        "seg_0001"
+      ],
+      "speaker_2": [
+        "seg_0002"
+      ]
+    },
+    "time_index": [
+      {
+        "id": "seg_0001",
+        "start": 0,
+        "end": 5,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0002",
+        "start": 5,
+        "end": 10,
+        "type": "speech"
+      }
+    ],
+    "emotion_index": {}
+  },
+  "statistics": {
+    "speech": {
+      "total_speech_time": 10,
+      "total_turns": 2,
+      "average_turn_duration": 5.0,
+      "speaker_count": 2
+    },
+    "linguistic": {
+      "total_words": 5,
+      "total_utterances": 2,
+      "average_words_per_utterance": 2.5,
+      "vocabulary_size": 5
+    },
+    "prosodic": {
+      "average_pitch_hz": 190.0,
+      "pitch_range_hz": 20
+    },
+    "emotional": {}
+  }
+}

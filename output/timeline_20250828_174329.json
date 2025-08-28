@@ -1,0 +1,2149 @@
+{
+  "metadata": {
+    "input_source": "sample1.wav",
+    "processing_timestamp": "2025-08-28T17:43:29.106515",
+    "audio_file": "output/extracted_audio_20250828_173913.wav",
+    "audio_duration": 134.4435625,
+    "sample_rate": 16000,
+    "file_size_mb": 4.102933883666992,
+    "configuration": {
+      "sample_rate": 16000,
+      "gpu_enabled": true,
+      "segment_duration": 30.0,
+      "emotion_threshold": 0.6
+    }
+  },
+  "summary": {
+    "total_speakers": 2,
+    "total_segments": 70,
+    "analysis_timestamp": "2025-08-28T17:43:29.108836",
+    "speaker_distribution": {
+      "SPEAKER_00": 49.42873333931472,
+      "SPEAKER_01": 11.058078738429746
+    },
+    "dominant_emotion": "angry",
+    "emotion_distribution": {
+      "neutral": 44.589334371350695,
+      "angry": 49.20202413390422,
+      "sad": 0.6033476060724022,
+      "surprise": 0.15570260801869437,
+      "disgust": 5.274425846632959,
+      "happy": 0.1751654340210163
+    },
+    "emotion_changes": 46
+  },
+  "timeline": [
+    {
+      "start": 0.0,
+      "end": 30.0,
+      "type": "acoustic_segment",
+      "features": {
+        "pitch": {
+          "mean": 182.35484313964844,
+          "std": 132.70425415039062,
+          "min": 50.80788803100586,
+          "max": 494.2424621582031,
+          "range": 443.43457412719727
+        },
+        "energy": {
+          "rms": 0.0711408406496048,
+          "zero_crossing_rate": 0.08754029101146056
+        }
+      }
+    },
+    {
+      "start": 0.33471875,
+      "end": 1.11096875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.152895170625265
+    },
+    {
+      "start": 2.22471875,
+      "end": 6.679718750000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15027126747952207
+    },
+    {
+      "start": 9.075968750000001,
+      "end": 10.10534375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14833328923588907
+    },
+    {
+      "start": 10.10534375,
+      "end": 10.13909375,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14984877785981343
+    },
+    {
+      "start": 12.349718750000001,
+      "end": 12.61971875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15672891760750882
+    },
+    {
+      "start": 14.189093750000001,
+      "end": 14.543468750000002,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14749879551749903
+    },
+    {
+      "start": 14.864093750000002,
+      "end": 15.960968750000003,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15027673245658904
+    },
+    {
+      "start": 18.54284375,
+      "end": 22.035968750000002,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1536917002900194
+    },
+    {
+      "start": 24.58409375,
+      "end": 25.10721875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "sad",
+      "confidence": 0.14853438348526782
+    },
+    {
+      "start": 26.84534375,
+      "end": 26.879093750000003,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "surprise",
+      "confidence": 0.15084131979878637
+    },
+    {
+      "start": 26.879093750000003,
+      "end": 27.570968750000002,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "disgust",
+      "confidence": 0.15339768121519728
+    },
+    {
+      "start": 27.570968750000002,
+      "end": 27.621593750000002,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14951363882660618
+    },
+    {
+      "start": 27.85784375,
+      "end": 28.16159375,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "disgust",
+      "confidence": 0.1502334436104431
+    },
+    {
+      "start": 28.0,
+      "end": 58.0,
+      "type": "acoustic_segment",
+      "features": {
+        "pitch": {
+          "mean": 212.313232421875,
+          "std": 130.43505859375,
+          "min": 50.8103141784668,
+          "max": 494.2424621582031,
+          "range": 443.4321479797363
+        },
+        "energy": {
+          "rms": 0.06979907304048538,
+          "zero_crossing_rate": 0.07178202875133262
+        }
+      }
+    },
+    {
+      "start": 28.43159375,
+      "end": 30.203468750000003,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15123769763225575
+    },
+    {
+      "start": 30.49034375,
+      "end": 32.66721875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15779732406462857
+    },
+    {
+      "start": 34.877843750000004,
+      "end": 36.07596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14681189199315706
+    },
+    {
+      "start": 36.07596875,
+      "end": 36.10971875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "surprise",
+      "confidence": 0.14950179532104785
+    },
+    {
+      "start": 37.10534375,
+      "end": 37.44284375,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15047333951632397
+    },
+    {
+      "start": 41.00346875,
+      "end": 41.03721875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15097893089617795
+    },
+    {
+      "start": 41.03721875,
+      "end": 43.06221875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15701466368368308
+    },
+    {
+      "start": 43.315343750000004,
+      "end": 44.54721875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.1601679578886532
+    },
+    {
+      "start": 45.47534375,
+      "end": 47.955968750000004,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15231596154130023
+    },
+    {
+      "start": 48.158468750000004,
+      "end": 48.580343750000004,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15610679846654898
+    },
+    {
+      "start": 48.782843750000005,
+      "end": 51.297218750000006,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15192542125363392
+    },
+    {
+      "start": 51.97221875,
+      "end": 52.900343750000005,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "disgust",
+      "confidence": 0.1498343841249774
+    },
+    {
+      "start": 53.35596875,
+      "end": 54.97596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15016883734578257
+    },
+    {
+      "start": 54.97596875,
+      "end": 55.02659375,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14865587838731287
+    },
+    {
+      "start": 55.02659375,
+      "end": 55.17846875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "happy",
+      "confidence": 0.149788362658037
+    },
+    {
+      "start": 55.330343750000004,
+      "end": 57.67596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.152175038692086
+    },
+    {
+      "start": 56.0,
+      "end": 86.0,
+      "type": "acoustic_segment",
+      "features": {
+        "pitch": {
+          "mean": 228.1728057861328,
+          "std": 137.67491149902344,
+          "min": 50.782936096191406,
+          "max": 495.8779602050781,
+          "range": 445.0950241088867
+        },
+        "energy": {
+          "rms": 0.0751785859465599,
+          "zero_crossing_rate": 0.06979662929770789
+        }
+      }
+    },
+    {
+      "start": 58.73909375,
+      "end": 60.679718750000006,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15017498008265967
+    },
+    {
+      "start": 61.81034375,
+      "end": 62.502218750000004,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14968827472630208
+    },
+    {
+      "start": 64.13909375,
+      "end": 65.16846875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1501389809624759
+    },
+    {
+      "start": 65.16846875,
+      "end": 65.18534375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.5
+    },
+    {
+      "start": 65.33721875,
+      "end": 65.86034375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1544480866468872
+    },
+    {
+      "start": 66.36659375,
+      "end": 68.74596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15043176950647177
+    },
+    {
+      "start": 71.24346875,
+      "end": 71.29409375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15012477587800382
+    },
+    {
+      "start": 71.29409375,
+      "end": 72.25596875000001,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15337939666327932
+    },
+    {
+      "start": 72.72846875,
+      "end": 72.74534375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.5
+    },
+    {
+      "start": 72.74534375,
+      "end": 75.51284375,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15150055391562503
+    },
+    {
+      "start": 76.27221875000001,
+      "end": 78.70221875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15892867636602404
+    },
+    {
+      "start": 78.70221875,
+      "end": 78.76971875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "surprise",
+      "confidence": 0.15200383620827607
+    },
+    {
+      "start": 79.02284375,
+      "end": 80.44034375000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1465298154694744
+    },
+    {
+      "start": 80.65971875000001,
+      "end": 83.10659375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15652427000242317
+    },
+    {
+      "start": 82.53284375000001,
+      "end": 82.97159375000001,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14869547485906096
+    },
+    {
+      "start": 83.57909375,
+      "end": 84.20346875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15973189314292413
+    },
+    {
+      "start": 84.0,
+      "end": 114.0,
+      "type": "acoustic_segment",
+      "features": {
+        "pitch": {
+          "mean": 225.0511016845703,
+          "std": 120.05616760253906,
+          "min": 50.79582595825195,
+          "max": 494.7334289550781,
+          "range": 443.9376029968262
+        },
+        "energy": {
+          "rms": 0.06130710616707802,
+          "zero_crossing_rate": 0.08069133961886994
+        }
+      }
+    },
+    {
+      "start": 84.45659375000001,
+      "end": 88.28721875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1484124908752829
+    },
+    {
+      "start": 91.49346875,
+      "end": 91.51034375,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.5
+    },
+    {
+      "start": 91.51034375,
+      "end": 94.75034375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15112469635162246
+    },
+    {
+      "start": 95.20596875000001,
+      "end": 96.26909375000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.14865903703201475
+    },
+    {
+      "start": 96.33659375,
+      "end": 97.23096875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.1473472758469767
+    },
+    {
+      "start": 97.99034375000001,
+      "end": 101.31471875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.14872629176684846
+    },
+    {
+      "start": 102.68159375,
+      "end": 106.54596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15126600188768352
+    },
+    {
+      "start": 107.55846875,
+      "end": 107.89596875000001,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1572169379039448
+    },
+    {
+      "start": 109.46534375,
+      "end": 112.24971875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15472235987391475
+    },
+    {
+      "start": 112.0,
+      "end": 134.4435625,
+      "type": "acoustic_segment",
+      "features": {
+        "pitch": {
+          "mean": 211.66404724121094,
+          "std": 89.1729965209961,
+          "min": 50.93836975097656,
+          "max": 494.5939025878906,
+          "range": 443.65553283691406
+        },
+        "energy": {
+          "rms": 0.05420571193099022,
+          "zero_crossing_rate": 0.06421733106303419
+        }
+      }
+    },
+    {
+      "start": 112.50284375000001,
+      "end": 113.02596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.16147757225337606
+    },
+    {
+      "start": 113.66721875,
+      "end": 114.10596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "disgust",
+      "confidence": 0.15047601457662013
+    },
+    {
+      "start": 114.35909375000001,
+      "end": 118.22346875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.1562936447631822
+    },
+    {
+      "start": 119.21909375000001,
+      "end": 119.77596875,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.1523743601697485
+    },
+    {
+      "start": 119.77596875,
+      "end": 124.77096875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15191179369164032
+    },
+    {
+      "start": 125.51346875,
+      "end": 127.90971875000001,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15308647054609842
+    },
+    {
+      "start": 127.90971875000001,
+      "end": 128.39909375000002,
+      "speaker": "SPEAKER_01",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.1577536438900918
+    },
+    {
+      "start": 128.39909375000002,
+      "end": 128.70284375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.15368237041590455
+    },
+    {
+      "start": 129.25971875000002,
+      "end": 130.03596875,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "angry",
+      "confidence": 0.14998050768116603
+    },
+    {
+      "start": 130.71096875,
+      "end": 131.26784375,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "neutral",
+      "confidence": 0.15365080568765707
+    },
+    {
+      "start": 131.72346875,
+      "end": 133.93409375000002,
+      "speaker": "SPEAKER_00",
+      "type": "speaker_segment",
+      "emotion": "disgust",
+      "confidence": 0.15058149889118505
+    }
+  ],
+  "speakers": {
+    "SPEAKER_00": {
+      "speaker_id": "SPEAKER_00",
+      "total_duration": 66.45374999999993,
+      "segment_count": 54,
+      "segments": [
+        {
+          "start": 0.33471875,
+          "end": 1.11096875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.7762500000000001
+        },
+        {
+          "start": 2.22471875,
+          "end": 6.679718750000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 4.455000000000001
+        },
+        {
+          "start": 9.075968750000001,
+          "end": 10.10534375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.0293749999999982
+        },
+        {
+          "start": 26.879093750000003,
+          "end": 27.570968750000002,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.6918749999999996
+        },
+        {
+          "start": 28.43159375,
+          "end": 28.718468750000003,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.286875000000002
+        },
+        {
+          "start": 29.17409375,
+          "end": 30.203468750000003,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.0293750000000017
+        },
+        {
+          "start": 30.49034375,
+          "end": 32.66721875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.1768750000000026
+        },
+        {
+          "start": 34.877843750000004,
+          "end": 36.07596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.1981249999999974
+        },
+        {
+          "start": 41.03721875,
+          "end": 43.06221875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.0249999999999986
+        },
+        {
+          "start": 43.315343750000004,
+          "end": 43.70346875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.38812499999999517
+        },
+        {
+          "start": 44.05784375,
+          "end": 44.54721875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.48937499999999545
+        },
+        {
+          "start": 45.47534375,
+          "end": 47.955968750000004,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.4806250000000034
+        },
+        {
+          "start": 48.782843750000005,
+          "end": 49.96409375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.1812499999999986
+        },
+        {
+          "start": 50.267843750000004,
+          "end": 50.75721875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.48937499999999545
+        },
+        {
+          "start": 50.976593750000006,
+          "end": 51.297218750000006,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.3206249999999997
+        },
+        {
+          "start": 51.97221875,
+          "end": 52.900343750000005,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.9281250000000014
+        },
+        {
+          "start": 53.35596875,
+          "end": 54.97596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.6199999999999974
+        },
+        {
+          "start": 55.02659375,
+          "end": 55.17846875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.15187499999999687
+        },
+        {
+          "start": 55.330343750000004,
+          "end": 57.67596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.3456249999999983
+        },
+        {
+          "start": 58.73909375,
+          "end": 60.679718750000006,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.9406250000000043
+        },
+        {
+          "start": 61.81034375,
+          "end": 62.502218750000004,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.6918750000000031
+        },
+        {
+          "start": 65.16846875,
+          "end": 65.18534375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.016874999999998863
+        },
+        {
+          "start": 65.33721875,
+          "end": 65.86034375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.5231249999999932
+        },
+        {
+          "start": 66.36659375,
+          "end": 68.74596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.379374999999996
+        },
+        {
+          "start": 71.24346875,
+          "end": 71.29409375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.05062499999999659
+        },
+        {
+          "start": 72.72846875,
+          "end": 72.74534375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.016874999999998863
+        },
+        {
+          "start": 78.70221875,
+          "end": 78.76971875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.06750000000000966
+        },
+        {
+          "start": 79.02284375,
+          "end": 80.44034375000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.417500000000004
+        },
+        {
+          "start": 80.65971875000001,
+          "end": 81.26721875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.6074999999999875
+        },
+        {
+          "start": 81.60471875,
+          "end": 83.10659375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.5018749999999983
+        },
+        {
+          "start": 83.57909375,
+          "end": 84.20346875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.6243750000000006
+        },
+        {
+          "start": 84.45659375000001,
+          "end": 88.28721875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 3.8306249999999977
+        },
+        {
+          "start": 91.51034375,
+          "end": 92.18534375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.6749999999999972
+        },
+        {
+          "start": 92.45534375000001,
+          "end": 92.84346875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.38812499999998806
+        },
+        {
+          "start": 93.19784375,
+          "end": 94.75034375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.5524999999999949
+        },
+        {
+          "start": 95.20596875000001,
+          "end": 96.26909375000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.0631249999999994
+        },
+        {
+          "start": 96.33659375,
+          "end": 97.23096875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.8943749999999966
+        },
+        {
+          "start": 97.99034375000001,
+          "end": 101.31471875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 3.3243750000000034
+        },
+        {
+          "start": 102.68159375,
+          "end": 103.99784375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.3162499999999966
+        },
+        {
+          "start": 104.45346875000001,
+          "end": 106.54596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.092499999999987
+        },
+        {
+          "start": 109.46534375,
+          "end": 110.49471875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.0293750000000017
+        },
+        {
+          "start": 110.93346875,
+          "end": 112.24971875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.3162500000000108
+        },
+        {
+          "start": 112.50284375000001,
+          "end": 113.02596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.5231249999999932
+        },
+        {
+          "start": 113.66721875,
+          "end": 114.10596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.43874999999999886
+        },
+        {
+          "start": 114.35909375000001,
+          "end": 118.22346875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 3.8643749999999955
+        },
+        {
+          "start": 119.77596875,
+          "end": 119.80971875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.033749999999997726
+        },
+        {
+          "start": 119.99534375,
+          "end": 120.50159375000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.5062500000000085
+        },
+        {
+          "start": 120.95721875000001,
+          "end": 122.20596875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 1.2487500000000011
+        },
+        {
+          "start": 122.56034375,
+          "end": 124.77096875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.2106250000000074
+        },
+        {
+          "start": 125.51346875,
+          "end": 127.90971875000001,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.396250000000009
+        },
+        {
+          "start": 128.39909375000002,
+          "end": 128.70284375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.30374999999997954
+        },
+        {
+          "start": 129.25971875000002,
+          "end": 130.03596875,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.7762499999999761
+        },
+        {
+          "start": 130.71096875,
+          "end": 131.26784375,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 0.5568749999999909
+        },
+        {
+          "start": 131.72346875,
+          "end": 133.93409375000002,
+          "speaker": "SPEAKER_00",
+          "confidence": 1.0,
+          "duration": 2.2106250000000216
+        }
+      ],
+      "average_confidence": 1.0,
+      "speaking_percentage": 49.42873333931472
+    },
+    "SPEAKER_01": {
+      "speaker_id": "SPEAKER_01",
+      "total_duration": 14.866875000000007,
+      "segment_count": 27,
+      "segments": [
+        {
+          "start": 10.10534375,
+          "end": 10.13909375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.03375000000000128
+        },
+        {
+          "start": 12.349718750000001,
+          "end": 12.61971875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.2699999999999996
+        },
+        {
+          "start": 14.189093750000001,
+          "end": 14.543468750000002,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.354375000000001
+        },
+        {
+          "start": 14.864093750000002,
+          "end": 15.960968750000003,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 1.0968750000000007
+        },
+        {
+          "start": 18.54284375,
+          "end": 20.550968750000003,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 2.0081250000000033
+        },
+        {
+          "start": 20.972843750000003,
+          "end": 21.46221875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.489374999999999
+        },
+        {
+          "start": 21.85034375,
+          "end": 22.035968750000002,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.1856250000000017
+        },
+        {
+          "start": 24.58409375,
+          "end": 25.10721875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.5231250000000003
+        },
+        {
+          "start": 26.84534375,
+          "end": 26.879093750000003,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.03375000000000128
+        },
+        {
+          "start": 27.570968750000002,
+          "end": 27.621593750000002,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.05062500000000014
+        },
+        {
+          "start": 27.85784375,
+          "end": 28.16159375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.30375000000000085
+        },
+        {
+          "start": 36.07596875,
+          "end": 36.10971875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.033749999999997726
+        },
+        {
+          "start": 37.10534375,
+          "end": 37.44284375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.3374999999999986
+        },
+        {
+          "start": 41.00346875,
+          "end": 41.03721875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.033749999999997726
+        },
+        {
+          "start": 48.158468750000004,
+          "end": 48.580343750000004,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.421875
+        },
+        {
+          "start": 54.97596875,
+          "end": 55.02659375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.050625000000003695
+        },
+        {
+          "start": 64.13909375,
+          "end": 65.16846875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 1.0293750000000017
+        },
+        {
+          "start": 71.29409375,
+          "end": 72.25596875000001,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.9618750000000063
+        },
+        {
+          "start": 72.74534375,
+          "end": 73.01534375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.269999999999996
+        },
+        {
+          "start": 73.30221875000001,
+          "end": 75.51284375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 2.210624999999993
+        },
+        {
+          "start": 76.27221875000001,
+          "end": 78.70221875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 2.4299999999999926
+        },
+        {
+          "start": 82.53284375000001,
+          "end": 82.97159375000001,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.43874999999999886
+        },
+        {
+          "start": 91.49346875,
+          "end": 91.51034375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.016874999999998863
+        },
+        {
+          "start": 107.55846875,
+          "end": 107.89596875000001,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.3375000000000057
+        },
+        {
+          "start": 119.21909375000001,
+          "end": 119.77596875,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.5568749999999909
+        },
+        {
+          "start": 127.90971875000001,
+          "end": 128.23034375,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.3206249999999926
+        },
+        {
+          "start": 128.33159375,
+          "end": 128.39909375000002,
+          "speaker": "SPEAKER_01",
+          "confidence": 1.0,
+          "duration": 0.06750000000002387
+        }
+      ],
+      "average_confidence": 1.0,
+      "speaking_percentage": 11.058078738429746
+    }
+  },
+  "emotions": {
+    "dominant_emotion": "angry",
+    "emotion_distribution": {
+      "neutral": 44.589334371350695,
+      "angry": 49.20202413390422,
+      "sad": 0.6033476060724022,
+      "surprise": 0.15570260801869437,
+      "disgust": 5.274425846632959,
+      "happy": 0.1751654340210163
+    },
+    "average_confidence": 0.15244760739067634,
+    "emotion_changes": 46,
+    "total_duration": 86.70374999999997,
+    "emotions_per_minute": 31.832533194931024
+  },
+  "acoustics": {
+    "features": [
+      {
+        "start": 0.0,
+        "end": 30.0,
+        "duration": 30.0,
+        "energy": {
+          "rms": 0.0711408406496048,
+          "zero_crossing_rate": 0.08754029101146056
+        },
+        "spectral": {
+          "centroid": 1549.1218152146585,
+          "rolloff": 3266.982609275053,
+          "flux": 1095.739990234375,
+          "bandwidth": 1801.0331457668585
+        },
+        "pitch": {
+          "mean": 182.35484313964844,
+          "std": 132.70425415039062,
+          "min": 50.80788803100586,
+          "max": 494.2424621582031,
+          "range": 443.43457412719727
+        },
+        "formants": {
+          "f1": 659.91943359375,
+          "f2": 1909.61279296875,
+          "f3": 2722.2275390625
+        },
+        "mfcc": [
+          -298.34869384765625,
+          90.93942260742188,
+          24.945858001708984,
+          26.059223175048828,
+          5.041906833648682,
+          -5.627078533172607,
+          -1.7280299663543701,
+          10.23582935333252,
+          -5.201747417449951,
+          -3.079745292663574,
+          0.7360293865203857,
+          4.162496089935303,
+          3.633486032485962
+        ],
+        "voice_quality": {
+          "jitter": 0.2092492934737261,
+          "shimmer": 1.487769365310669,
+          "hnr": 57.83987045288086
+        },
+        "tempo": 104.16666666666667
+      },
+      {
+        "start": 28.0,
+        "end": 58.0,
+        "duration": 30.0,
+        "energy": {
+          "rms": 0.06979907304048538,
+          "zero_crossing_rate": 0.07178202875133262
+        },
+        "spectral": {
+          "centroid": 1361.2118843623912,
+          "rolloff": 2893.5650986140727,
+          "flux": 1202.4178466796875,
+          "bandwidth": 1683.662658160674
+        },
+        "pitch": {
+          "mean": 212.313232421875,
+          "std": 130.43505859375,
+          "min": 50.8103141784668,
+          "max": 494.2424621582031,
+          "range": 443.4321479797363
+        },
+        "formants": {
+          "f1": 681.2789306640625,
+          "f2": 952.6854248046875,
+          "f3": 2081.779296875
+        },
+        "mfcc": [
+          -284.35943603515625,
+          105.27996826171875,
+          20.48912239074707,
+          28.077865600585938,
+          3.5059540271759033,
+          -8.974032402038574,
+          -6.262481212615967,
+          10.097859382629395,
+          -0.9266469478607178,
+          -3.160557270050049,
+          1.8397271633148193,
+          -0.2884099781513214,
+          2.332660675048828
+        ],
+        "voice_quality": {
+          "jitter": 0.1750438322458843,
+          "shimmer": 1.4417197704315186,
+          "hnr": 45.27147674560547
+        },
+        "tempo": 125.0
+      },
+      {
+        "start": 56.0,
+        "end": 86.0,
+        "duration": 30.0,
+        "energy": {
+          "rms": 0.0751785859465599,
+          "zero_crossing_rate": 0.06979662929770789
+        },
+        "spectral": {
+          "centroid": 1343.7517264155088,
+          "rolloff": 2854.7941098081023,
+          "flux": 1442.455322265625,
+          "bandwidth": 1643.428070924069
+        },
+        "pitch": {
+          "mean": 228.1728057861328,
+          "std": 137.67491149902344,
+          "min": 50.782936096191406,
+          "max": 495.8779602050781,
+          "range": 445.0950241088867
+        },
+        "formants": {
+          "f1": 605.6590576171875,
+          "f2": 1150.2789306640625,
+          "f3": 1999.5721435546875
+        },
+        "mfcc": [
+          -266.0422668457031,
+          108.43119049072266,
+          15.154224395751953,
+          30.73623275756836,
+          2.5714025497436523,
+          -11.337730407714844,
+          -7.094270706176758,
+          8.376557350158691,
+          -4.262530326843262,
+          -4.860573768615723,
+          2.5084750652313232,
+          0.4718873202800751,
+          2.1452627182006836
+        ],
+        "voice_quality": {
+          "jitter": 0.09792801395805766,
+          "shimmer": 1.3333498239517212,
+          "hnr": 47.74208068847656
+        },
+        "tempo": 110.29411764705883
+      },
+      {
+        "start": 84.0,
+        "end": 114.0,
+        "duration": 30.0,
+        "energy": {
+          "rms": 0.06130710616707802,
+          "zero_crossing_rate": 0.08069133961886994
+        },
+        "spectral": {
+          "centroid": 1493.6687921126256,
+          "rolloff": 3228.278251599147,
+          "flux": 939.4963989257812,
+          "bandwidth": 1752.833023481691
+        },
+        "pitch": {
+          "mean": 225.0511016845703,
+          "std": 120.05616760253906,
+          "min": 50.79582595825195,
+          "max": 494.7334289550781,
+          "range": 443.9376029968262
+        },
+        "formants": {
+          "f1": 579.5717163085938,
+          "f2": 1601.120849609375,
+          "f3": 2026.1519775390625
+        },
+        "mfcc": [
+          -275.1603698730469,
+          97.62268829345703,
+          19.82599639892578,
+          31.113115310668945,
+          2.2239794731140137,
+          -7.182895183563232,
+          -10.533364295959473,
+          8.899603843688965,
+          0.9353906512260437,
+          -2.845001697540283,
+          0.8281098008155823,
+          1.4152978658676147,
+          1.396546721458435
+        ],
+        "voice_quality": {
+          "jitter": 0.13753899882345474,
+          "shimmer": 1.395769715309143,
+          "hnr": 45.160789489746094
+        },
+        "tempo": 117.1875
+      },
+      {
+        "start": 112.0,
+        "end": 134.4435625,
+        "duration": 22.443562500000013,
+        "energy": {
+          "rms": 0.05420571193099022,
+          "zero_crossing_rate": 0.06421733106303419
+        },
+        "spectral": {
+          "centroid": 1351.0495320947834,
+          "rolloff": 3036.0243055555557,
+          "flux": 677.7196655273438,
+          "bandwidth": 1684.4559013507032
+        },
+        "pitch": {
+          "mean": 211.66404724121094,
+          "std": 89.1729965209961,
+          "min": 50.93836975097656,
+          "max": 494.5939025878906,
+          "range": 443.65553283691406
+        },
+        "formants": {
+          "f1": 543.456298828125,
+          "f2": 1414.1602783203125,
+          "f3": 1953.2998046875
+        },
+        "mfcc": [
+          -284.7821044921875,
+          104.71198272705078,
+          20.075088500976562,
+          36.942657470703125,
+          6.136438369750977,
+          -3.3603389263153076,
+          -14.468352317810059,
+          7.341428279876709,
+          -1.1088480949401855,
+          -2.4978513717651367,
+          2.129293441772461,
+          0.6851019859313965,
+          -0.5118675231933594
+        ],
+        "voice_quality": {
+          "jitter": 0.1287413424068733,
+          "shimmer": 1.2257248163223267,
+          "hnr": 51.79526901245117
+        },
+        "tempo": 125.0
+      }
+    ]
+  },
+  "transcriptions": {
+    "segments": [
+      {
+        "start": 0.33471875,
+        "end": 1.11096875,
+        "text": "[\ud654\uc790 1 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 2.22471875,
+        "end": 6.679718750000001,
+        "text": "[\ud654\uc790 2 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 9.075968750000001,
+        "end": 10.10534375,
+        "text": "[\ud654\uc790 3 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 10.10534375,
+        "end": 10.13909375,
+        "text": "[\ud654\uc790 4 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 12.349718750000001,
+        "end": 12.61971875,
+        "text": "[\ud654\uc790 5 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 14.189093750000001,
+        "end": 14.543468750000002,
+        "text": "[\ud654\uc790 6 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 14.864093750000002,
+        "end": 15.960968750000003,
+        "text": "[\ud654\uc790 7 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 18.54284375,
+        "end": 20.550968750000003,
+        "text": "[\ud654\uc790 8 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 20.972843750000003,
+        "end": 21.46221875,
+        "text": "[\ud654\uc790 9 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 21.85034375,
+        "end": 22.035968750000002,
+        "text": "[\ud654\uc790 10 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 24.58409375,
+        "end": 25.10721875,
+        "text": "[\ud654\uc790 11 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 26.84534375,
+        "end": 26.879093750000003,
+        "text": "[\ud654\uc790 12 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 26.879093750000003,
+        "end": 27.570968750000002,
+        "text": "[\ud654\uc790 13 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 27.570968750000002,
+        "end": 27.621593750000002,
+        "text": "[\ud654\uc790 14 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 27.85784375,
+        "end": 28.16159375,
+        "text": "[\ud654\uc790 15 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 28.43159375,
+        "end": 28.718468750000003,
+        "text": "[\ud654\uc790 16 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 29.17409375,
+        "end": 30.203468750000003,
+        "text": "[\ud654\uc790 17 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 30.49034375,
+        "end": 32.66721875,
+        "text": "[\ud654\uc790 18 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 34.877843750000004,
+        "end": 36.07596875,
+        "text": "[\ud654\uc790 19 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 36.07596875,
+        "end": 36.10971875,
+        "text": "[\ud654\uc790 20 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 37.10534375,
+        "end": 37.44284375,
+        "text": "[\ud654\uc790 21 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 41.00346875,
+        "end": 41.03721875,
+        "text": "[\ud654\uc790 22 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 41.03721875,
+        "end": 43.06221875,
+        "text": "[\ud654\uc790 23 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 43.315343750000004,
+        "end": 43.70346875,
+        "text": "[\ud654\uc790 24 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 44.05784375,
+        "end": 44.54721875,
+        "text": "[\ud654\uc790 25 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 45.47534375,
+        "end": 47.955968750000004,
+        "text": "[\ud654\uc790 26 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 48.158468750000004,
+        "end": 48.580343750000004,
+        "text": "[\ud654\uc790 27 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 48.782843750000005,
+        "end": 49.96409375,
+        "text": "[\ud654\uc790 28 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 50.267843750000004,
+        "end": 50.75721875,
+        "text": "[\ud654\uc790 29 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 50.976593750000006,
+        "end": 51.297218750000006,
+        "text": "[\ud654\uc790 30 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 51.97221875,
+        "end": 52.900343750000005,
+        "text": "[\ud654\uc790 31 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 53.35596875,
+        "end": 54.97596875,
+        "text": "[\ud654\uc790 32 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 54.97596875,
+        "end": 55.02659375,
+        "text": "[\ud654\uc790 33 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 55.02659375,
+        "end": 55.17846875,
+        "text": "[\ud654\uc790 34 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 55.330343750000004,
+        "end": 57.67596875,
+        "text": "[\ud654\uc790 35 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 58.73909375,
+        "end": 60.679718750000006,
+        "text": "[\ud654\uc790 36 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 61.81034375,
+        "end": 62.502218750000004,
+        "text": "[\ud654\uc790 37 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 64.13909375,
+        "end": 65.16846875,
+        "text": "[\ud654\uc790 38 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 65.16846875,
+        "end": 65.18534375,
+        "text": "[\ud654\uc790 39 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 65.33721875,
+        "end": 65.86034375,
+        "text": "[\ud654\uc790 40 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 66.36659375,
+        "end": 68.74596875,
+        "text": "[\ud654\uc790 41 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 71.24346875,
+        "end": 71.29409375,
+        "text": "[\ud654\uc790 42 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 71.29409375,
+        "end": 72.25596875000001,
+        "text": "[\ud654\uc790 43 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 72.72846875,
+        "end": 72.74534375,
+        "text": "[\ud654\uc790 44 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 72.74534375,
+        "end": 73.01534375,
+        "text": "[\ud654\uc790 45 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 73.30221875000001,
+        "end": 75.51284375,
+        "text": "[\ud654\uc790 46 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 76.27221875000001,
+        "end": 78.70221875,
+        "text": "[\ud654\uc790 47 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 78.70221875,
+        "end": 78.76971875000001,
+        "text": "[\ud654\uc790 48 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 79.02284375,
+        "end": 80.44034375000001,
+        "text": "[\ud654\uc790 49 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 80.65971875000001,
+        "end": 81.26721875,
+        "text": "[\ud654\uc790 50 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 81.60471875,
+        "end": 83.10659375,
+        "text": "[\ud654\uc790 51 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 82.53284375000001,
+        "end": 82.97159375000001,
+        "text": "[\ud654\uc790 52 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 83.57909375,
+        "end": 84.20346875,
+        "text": "[\ud654\uc790 53 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 84.45659375000001,
+        "end": 88.28721875000001,
+        "text": "[\ud654\uc790 54 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 91.49346875,
+        "end": 91.51034375,
+        "text": "[\ud654\uc790 55 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 91.51034375,
+        "end": 92.18534375,
+        "text": "[\ud654\uc790 56 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 92.45534375000001,
+        "end": 92.84346875,
+        "text": "[\ud654\uc790 57 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 93.19784375,
+        "end": 94.75034375,
+        "text": "[\ud654\uc790 58 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 95.20596875000001,
+        "end": 96.26909375000001,
+        "text": "[\ud654\uc790 59 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 96.33659375,
+        "end": 97.23096875,
+        "text": "[\ud654\uc790 60 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 97.99034375000001,
+        "end": 101.31471875000001,
+        "text": "[\ud654\uc790 61 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 102.68159375,
+        "end": 103.99784375,
+        "text": "[\ud654\uc790 62 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 104.45346875000001,
+        "end": 106.54596875,
+        "text": "[\ud654\uc790 63 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 107.55846875,
+        "end": 107.89596875000001,
+        "text": "[\ud654\uc790 64 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 109.46534375,
+        "end": 110.49471875,
+        "text": "[\ud654\uc790 65 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 110.93346875,
+        "end": 112.24971875000001,
+        "text": "[\ud654\uc790 66 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 112.50284375000001,
+        "end": 113.02596875,
+        "text": "[\ud654\uc790 67 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 113.66721875,
+        "end": 114.10596875,
+        "text": "[\ud654\uc790 68 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 114.35909375000001,
+        "end": 118.22346875000001,
+        "text": "[\ud654\uc790 69 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 119.21909375000001,
+        "end": 119.77596875,
+        "text": "[\ud654\uc790 70 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 119.77596875,
+        "end": 119.80971875,
+        "text": "[\ud654\uc790 71 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 119.99534375,
+        "end": 120.50159375000001,
+        "text": "[\ud654\uc790 72 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 120.95721875000001,
+        "end": 122.20596875000001,
+        "text": "[\ud654\uc790 73 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 122.56034375,
+        "end": 124.77096875000001,
+        "text": "[\ud654\uc790 74 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 125.51346875,
+        "end": 127.90971875000001,
+        "text": "[\ud654\uc790 75 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 127.90971875000001,
+        "end": 128.23034375,
+        "text": "[\ud654\uc790 76 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 128.33159375,
+        "end": 128.39909375000002,
+        "text": "[\ud654\uc790 77 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 128.39909375000002,
+        "end": 128.70284375,
+        "text": "[\ud654\uc790 78 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 129.25971875000002,
+        "end": 130.03596875,
+        "text": "[\ud654\uc790 79 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 130.71096875,
+        "end": 131.26784375,
+        "text": "[\ud654\uc790 80 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      },
+      {
+        "start": 131.72346875,
+        "end": 133.93409375000002,
+        "text": "[\ud654\uc790 81 \ubc1c\ud654 \ub0b4\uc6a9]",
+        "language": "ko",
+        "confidence": 0.95,
+        "speaker": "SPEAKER_00"
+      }
+    ],
+    "total_segments": 81,
+    "languages": [
+      "ko"
+    ]
+  }
+}

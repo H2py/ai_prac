@@ -1,0 +1,861 @@
+{
+  "media": {
+    "audio_file": "example_movie_clip.wav",
+    "duration": 23.84,
+    "sample_rate": 48000,
+    "channels": 2,
+    "language": "en",
+    "pipeline": {
+      "diarization": "pyannote.audio 3.x",
+      "asr": "whisperX large-v3",
+      "vad": "silero-vad 5.1",
+      "alignment": "whisperX-phoneme-aligner (en)"
+    }
+  },
+  "diarization": {
+    "turns": [
+      {
+        "segment_id": "seg_0001",
+        "start": 0.64,
+        "end": 3.12,
+        "speaker": "SPK_00",
+        "confidence": 0.92
+      },
+      {
+        "segment_id": "seg_0002",
+        "start": 3.32,
+        "end": 6.88,
+        "speaker": "SPK_01",
+        "confidence": 0.89
+      },
+      {
+        "segment_id": "seg_0003",
+        "start": 7.04,
+        "end": 10.56,
+        "speaker": "SPK_00",
+        "confidence": 0.94
+      },
+      {
+        "segment_id": "seg_0004",
+        "start": 10.76,
+        "end": 13.42,
+        "speaker": "SPK_02",
+        "confidence": 0.88
+      },
+      {
+        "segment_id": "seg_0005",
+        "start": 13.54,
+        "end": 17.42,
+        "speaker": "SPK_01",
+        "confidence": 0.91
+      },
+      {
+        "segment_id": "seg_0006",
+        "start": 17.64,
+        "end": 22.9,
+        "speaker": "SPK_00",
+        "confidence": 0.95
+      }
+    ],
+    "rttm_uri": "example_movie_clip.rttm"
+  },
+  "asr": {
+    "utterances": [
+      {
+        "segment_id": "seg_0001",
+        "speaker": "SPK_00",
+        "start": 0.64,
+        "end": 3.12,
+        "text": "We shouldn't be here.",
+        "avg_logprob": -0.09,
+        "no_speech_prob": 0.02,
+        "words": [
+          {
+            "start": 0.64,
+            "end": 0.9,
+            "word": "We",
+            "confidence": 0.98,
+            "phones": [
+              {
+                "p": "w",
+                "t": 0.64
+              },
+              {
+                "p": "iy",
+                "t": 0.72
+              }
+            ],
+            "pitch_hz": 180.8,
+            "volume_db": -14.9
+          },
+          {
+            "start": 0.9,
+            "end": 1.26,
+            "word": "shouldn't",
+            "confidence": 0.96,
+            "phones": [
+              {
+                "p": "sh",
+                "t": 0.9
+              },
+              {
+                "p": "uh",
+                "t": 1
+              },
+              {
+                "p": "d",
+                "t": 1.11
+              },
+              {
+                "p": "n",
+                "t": 1.17
+              },
+              {
+                "p": "t",
+                "t": 1.24
+              }
+            ],
+            "pitch_hz": 188.8,
+            "volume_db": -13.7
+          },
+          {
+            "start": 1.26,
+            "end": 1.46,
+            "word": "be",
+            "confidence": 0.99,
+            "phones": [
+              {
+                "p": "b",
+                "t": 1.26
+              },
+              {
+                "p": "iy",
+                "t": 1.33
+              }
+            ],
+            "pitch_hz": 176,
+            "volume_db": -15.6
+          },
+          {
+            "start": 1.46,
+            "end": 2.78,
+            "word": "here.",
+            "confidence": 0.97,
+            "phones": [
+              {
+                "p": "h",
+                "t": 1.46
+              },
+              {
+                "p": "iy",
+                "t": 1.56
+              },
+              {
+                "p": "r",
+                "t": 1.74
+              }
+            ],
+            "pitch_hz": 185.6,
+            "volume_db": -2.2
+          }
+        ]
+      },
+      {
+        "segment_id": "seg_0002",
+        "speaker": "SPK_01",
+        "start": 3.32,
+        "end": 6.88,
+        "text": "Relax. I've done this before.",
+        "avg_logprob": -0.12,
+        "no_speech_prob": 0.03,
+        "words": [
+          {
+            "start": 3.32,
+            "end": 3.76,
+            "word": "Relax.",
+            "confidence": 0.95,
+            "phones": [
+              {
+                "p": "r",
+                "t": 3.32
+              },
+              {
+                "p": "ih",
+                "t": 3.38
+              },
+              {
+                "p": "l",
+                "t": 3.52
+              },
+              {
+                "p": "ae",
+                "t": 3.58
+              },
+              {
+                "p": "ks",
+                "t": 3.7
+              }
+            ],
+            "pitch_hz": 195.2,
+            "volume_db": -12.7
+          },
+          {
+            "start": 4.16,
+            "end": 4.38,
+            "word": "I've",
+            "confidence": 0.94,
+            "phones": [
+              {
+                "p": "ay",
+                "t": 4.16
+              },
+              {
+                "p": "v",
+                "t": 4.3
+              }
+            ],
+            "pitch_hz": 177.6,
+            "volume_db": -15.4
+          },
+          {
+            "start": 4.38,
+            "end": 4.74,
+            "word": "done",
+            "confidence": 0.98,
+            "phones": [
+              {
+                "p": "d",
+                "t": 4.38
+              },
+              {
+                "p": "ah",
+                "t": 4.47
+              },
+              {
+                "p": "n",
+                "t": 4.62
+              }
+            ],
+            "pitch_hz": 188.8,
+            "volume_db": -13.7
+          },
+          {
+            "start": 4.74,
+            "end": 4.92,
+            "word": "this",
+            "confidence": 0.99,
+            "phones": [
+              {
+                "p": "dh",
+                "t": 4.74
+              },
+              {
+                "p": "ih",
+                "t": 4.8
+              },
+              {
+                "p": "s",
+                "t": 4.88
+              }
+            ],
+            "pitch_hz": 174.4,
+            "volume_db": -15.8
+          },
+          {
+            "start": 4.92,
+            "end": 5.42,
+            "word": "before.",
+            "confidence": 0.97,
+            "phones": [
+              {
+                "p": "b",
+                "t": 4.92
+              },
+              {
+                "p": "ih",
+                "t": 5.02
+              },
+              {
+                "p": "f",
+                "t": 5.14
+              },
+              {
+                "p": "ao",
+                "t": 5.26
+              },
+              {
+                "p": "r",
+                "t": 5.36
+              }
+            ],
+            "pitch_hz": 160,
+            "volume_db": -12
+          }
+        ]
+      },
+      {
+        "segment_id": "seg_0003",
+        "speaker": "SPK_00",
+        "start": 7.04,
+        "end": 10.56,
+        "text": "That's what worries me.",
+        "avg_logprob": -0.08,
+        "no_speech_prob": 0.01,
+        "words": [
+          {
+            "start": 7.04,
+            "end": 7.42,
+            "word": "That's",
+            "confidence": 0.98,
+            "phones": [
+              {
+                "p": "dh",
+                "t": 7.04
+              },
+              {
+                "p": "ae",
+                "t": 7.12
+              },
+              {
+                "p": "t",
+                "t": 7.32
+              },
+              {
+                "p": "s",
+                "t": 7.38
+              }
+            ],
+            "pitch_hz": 190.4,
+            "volume_db": -13.4
+          },
+          {
+            "start": 7.42,
+            "end": 7.72,
+            "word": "what",
+            "confidence": 0.99,
+            "phones": [
+              {
+                "p": "w",
+                "t": 7.42
+              },
+              {
+                "p": "ah",
+                "t": 7.52
+              },
+              {
+                "p": "t",
+                "t": 7.68
+              }
+            ],
+            "pitch_hz": 184,
+            "volume_db": -14.4
+          },
+          {
+            "start": 7.72,
+            "end": 8.24,
+            "word": "worries",
+            "confidence": 0.96,
+            "phones": [
+              {
+                "p": "w",
+                "t": 7.72
+              },
+              {
+                "p": "er",
+                "t": 7.88
+              },
+              {
+                "p": "iy",
+                "t": 8.06
+              },
+              {
+                "p": "z",
+                "t": 8.2
+              }
+            ],
+            "pitch_hz": 161.6,
+            "volume_db": -11.8
+          },
+          {
+            "start": 8.24,
+            "end": 8.98,
+            "word": "me.",
+            "confidence": 0.99,
+            "phones": [
+              {
+                "p": "m",
+                "t": 8.24
+              },
+              {
+                "p": "iy",
+                "t": 8.42
+              }
+            ],
+            "pitch_hz": 179.2,
+            "volume_db": -9.1
+          }
+        ]
+      },
+      {
+        "segment_id": "seg_0004",
+        "speaker": "SPK_02",
+        "start": 10.76,
+        "end": 13.42,
+        "text": "(radio) Keep it short. You're live in five.",
+        "avg_logprob": -0.2,
+        "no_speech_prob": 0.04,
+        "words": [
+          {
+            "start": 10.76,
+            "end": 10.98,
+            "word": "(radio)",
+            "confidence": 0.9,
+            "phones": [],
+            "pitch_hz": 177.6,
+            "volume_db": -15.4
+          },
+          {
+            "start": 11.02,
+            "end": 11.26,
+            "word": "Keep",
+            "confidence": 0.94,
+            "phones": [
+              {
+                "p": "k",
+                "t": 11.02
+              },
+              {
+                "p": "iy",
+                "t": 11.12
+              },
+              {
+                "p": "p",
+                "t": 11.22
+              }
+            ],
+            "pitch_hz": 179.2,
+            "volume_db": -15.1
+          },
+          {
+            "start": 11.26,
+            "end": 11.48,
+            "word": "it",
+            "confidence": 0.96,
+            "phones": [
+              {
+                "p": "ih",
+                "t": 11.26
+              },
+              {
+                "p": "t",
+                "t": 11.42
+              }
+            ],
+            "pitch_hz": 177.6,
+            "volume_db": -15.4
+          },
+          {
+            "start": 11.48,
+            "end": 11.86,
+            "word": "short.",
+            "confidence": 0.93,
+            "phones": [
+              {
+                "p": "sh",
+                "t": 11.48
+              },
+              {
+                "p": "ao",
+                "t": 11.64
+              },
+              {
+                "p": "rt",
+                "t": 11.78
+              }
+            ],
+            "pitch_hz": 190.4,
+            "volume_db": -13.4
+          },
+          {
+            "start": 12.24,
+            "end": 12.52,
+            "word": "You're",
+            "confidence": 0.92,
+            "phones": [
+              {
+                "p": "y",
+                "t": 12.24
+              },
+              {
+                "p": "uh",
+                "t": 12.3
+              },
+              {
+                "p": "r",
+                "t": 12.44
+              }
+            ],
+            "pitch_hz": 182.4,
+            "volume_db": -14.6
+          },
+          {
+            "start": 12.52,
+            "end": 12.72,
+            "word": "live",
+            "confidence": 0.95,
+            "phones": [
+              {
+                "p": "l",
+                "t": 12.52
+              },
+              {
+                "p": "ay",
+                "t": 12.6
+              },
+              {
+                "p": "v",
+                "t": 12.68
+              }
+            ],
+            "pitch_hz": 176,
+            "volume_db": -15.6
+          },
+          {
+            "start": 12.72,
+            "end": 13.24,
+            "word": "in",
+            "confidence": 0.98,
+            "phones": [
+              {
+                "p": "ih",
+                "t": 12.72
+              },
+              {
+                "p": "n",
+                "t": 13.12
+              }
+            ],
+            "pitch_hz": 161.6,
+            "volume_db": -11.8
+          },
+          {
+            "start": 13.24,
+            "end": 13.42,
+            "word": "five.",
+            "confidence": 0.97,
+            "phones": [
+              {
+                "p": "f",
+                "t": 13.24
+              },
+              {
+                "p": "ay",
+                "t": 13.3
+              },
+              {
+                "p": "v",
+                "t": 13.38
+              }
+            ],
+            "pitch_hz": 174.4,
+            "volume_db": -15.8
+          }
+        ]
+      },
+      {
+        "segment_id": "seg_0005",
+        "speaker": "SPK_01",
+        "start": 13.54,
+        "end": 17.42,
+        "text": "See? Even the universe agrees.",
+        "avg_logprob": -0.1,
+        "no_speech_prob": 0.02,
+        "words": [
+          {
+            "start": 13.54,
+            "end": 13.76,
+            "word": "See?",
+            "confidence": 0.97,
+            "phones": [
+              {
+                "p": "s",
+                "t": 13.54
+              },
+              {
+                "p": "iy",
+                "t": 13.62
+              }
+            ],
+            "pitch_hz": 177.6,
+            "volume_db": -15.4
+          },
+          {
+            "start": 13.96,
+            "end": 14.3,
+            "word": "Even",
+            "confidence": 0.96,
+            "phones": [
+              {
+                "p": "iy",
+                "t": 13.96
+              },
+              {
+                "p": "v",
+                "t": 14.14
+              },
+              {
+                "p": "n",
+                "t": 14.26
+              }
+            ],
+            "pitch_hz": 187.2,
+            "volume_db": -13.9
+          },
+          {
+            "start": 14.3,
+            "end": 14.48,
+            "word": "the",
+            "confidence": 0.99,
+            "phones": [
+              {
+                "p": "dh",
+                "t": 14.3
+              },
+              {
+                "p": "ah",
+                "t": 14.42
+              }
+            ],
+            "pitch_hz": 174.4,
+            "volume_db": -15.8
+          },
+          {
+            "start": 14.48,
+            "end": 15.08,
+            "word": "universe",
+            "confidence": 0.95,
+            "phones": [
+              {
+                "p": "y",
+                "t": 14.48
+              },
+              {
+                "p": "uw",
+                "t": 14.56
+              },
+              {
+                "p": "n",
+                "t": 14.68
+              },
+              {
+                "p": "ih",
+                "t": 14.82
+              },
+              {
+                "p": "v",
+                "t": 14.94
+              },
+              {
+                "p": "er",
+                "t": 15.02
+              },
+              {
+                "p": "s",
+                "t": 15.06
+              }
+            ],
+            "pitch_hz": 168,
+            "volume_db": -10.8
+          },
+          {
+            "start": 15.08,
+            "end": 15.76,
+            "word": "agrees.",
+            "confidence": 0.96,
+            "phones": [
+              {
+                "p": "uh",
+                "t": 15.08
+              },
+              {
+                "p": "g",
+                "t": 15.24
+              },
+              {
+                "p": "r",
+                "t": 15.38
+              },
+              {
+                "p": "iy",
+                "t": 15.56
+              },
+              {
+                "p": "z",
+                "t": 15.7
+              }
+            ],
+            "pitch_hz": 174.4,
+            "volume_db": -9.8
+          }
+        ]
+      },
+      {
+        "segment_id": "seg_0006",
+        "speaker": "SPK_00",
+        "start": 17.64,
+        "end": 22.9,
+        "text": "Or it's about to prove us wrong.",
+        "avg_logprob": -0.11,
+        "no_speech_prob": 0.03,
+        "words": [
+          {
+            "start": 17.64,
+            "end": 17.86,
+            "word": "Or",
+            "confidence": 0.95,
+            "phones": [
+              {
+                "p": "ao",
+                "t": 17.64
+              },
+              {
+                "p": "r",
+                "t": 17.78
+              }
+            ],
+            "pitch_hz": 177.6,
+            "volume_db": -15.4
+          },
+          {
+            "start": 17.86,
+            "end": 18.04,
+            "word": "it's",
+            "confidence": 0.97,
+            "phones": [
+              {
+                "p": "ih",
+                "t": 17.86
+              },
+              {
+                "p": "ts",
+                "t": 17.98
+              }
+            ],
+            "pitch_hz": 174.4,
+            "volume_db": -15.8
+          },
+          {
+            "start": 18.04,
+            "end": 18.36,
+            "word": "about",
+            "confidence": 0.98,
+            "phones": [
+              {
+                "p": "ah",
+                "t": 18.04
+              },
+              {
+                "p": "b",
+                "t": 18.14
+              },
+              {
+                "p": "aw",
+                "t": 18.22
+              },
+              {
+                "p": "t",
+                "t": 18.32
+              }
+            ],
+            "pitch_hz": 185.6,
+            "volume_db": -14.2
+          },
+          {
+            "start": 18.36,
+            "end": 18.72,
+            "word": "to",
+            "confidence": 0.99,
+            "phones": [
+              {
+                "p": "t",
+                "t": 18.36
+              },
+              {
+                "p": "uw",
+                "t": 18.46
+              }
+            ],
+            "pitch_hz": 188.8,
+            "volume_db": -13.7
+          },
+          {
+            "start": 18.72,
+            "end": 19.16,
+            "word": "prove",
+            "confidence": 0.96,
+            "phones": [
+              {
+                "p": "p",
+                "t": 18.72
+              },
+              {
+                "p": "r",
+                "t": 18.82
+              },
+              {
+                "p": "uw",
+                "t": 18.92
+              },
+              {
+                "p": "v",
+                "t": 19.06
+              }
+            ],
+            "pitch_hz": 195.2,
+            "volume_db": -12.7
+          },
+          {
+            "start": 19.16,
+            "end": 19.42,
+            "word": "us",
+            "confidence": 0.98,
+            "phones": [
+              {
+                "p": "ah",
+                "t": 19.16
+              },
+              {
+                "p": "s",
+                "t": 19.34
+              }
+            ],
+            "pitch_hz": 180.8,
+            "volume_db": -14.9
+          },
+          {
+            "start": 19.42,
+            "end": 19.76,
+            "word": "wrong.",
+            "confidence": 0.95,
+            "phones": [
+              {
+                "p": "r",
+                "t": 19.42
+              },
+              {
+                "p": "ao",
+                "t": 19.54
+              },
+              {
+                "p": "ng",
+                "t": 19.7
+              }
+            ],
+            "pitch_hz": 187.2,
+            "volume_db": -13.9
+          }
+        ]
+      }
+    ]
+  }
+}

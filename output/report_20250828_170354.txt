@@ -1,0 +1,36 @@
+============================================================
+AUDIO ANALYSIS REPORT
+============================================================
+
+FILE INFORMATION
+----------------------------------------
+  input_source: sample1.wav
+  processing_timestamp: 2025-08-28T17:06:14.398732
+  audio_file: output/extracted_audio_20250828_170354.wav
+  audio_duration: 134.4435625
+  sample_rate: 16000
+  file_size_mb: 4.102933883666992
+  configuration: {'sample_rate': 16000, 'gpu_enabled': True, 'segment_duration': 30.0, 'emotion_threshold': 0.6}
+
+ANALYSIS SUMMARY
+----------------------------------------
+  Total Speakers: 1
+  Total Segments: 4
+  Dominant Emotion: neutral
+  Emotion Changes: 0
+
+SPEAKER DISTRIBUTION
+----------------------------------------
+  speaker_1: 100.0%
+
+EMOTION DISTRIBUTION
+----------------------------------------
+  neutral: 100.0%
+
+TIMELINE SUMMARY
+----------------------------------------
+  First Segment: 0.00s
+  Last Segment: 134.44s
+  Total Duration: 134.44s
+
+============================================================

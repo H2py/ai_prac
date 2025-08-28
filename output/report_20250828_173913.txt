@@ -1,0 +1,42 @@
+============================================================
+AUDIO ANALYSIS REPORT
+============================================================
+
+FILE INFORMATION
+----------------------------------------
+  input_source: sample1.wav
+  processing_timestamp: 2025-08-28T17:43:29.106515
+  audio_file: output/extracted_audio_20250828_173913.wav
+  audio_duration: 134.4435625
+  sample_rate: 16000
+  file_size_mb: 4.102933883666992
+  configuration: {'sample_rate': 16000, 'gpu_enabled': True, 'segment_duration': 30.0, 'emotion_threshold': 0.6}
+
+ANALYSIS SUMMARY
+----------------------------------------
+  Total Speakers: 2
+  Total Segments: 70
+  Dominant Emotion: angry
+  Emotion Changes: 46
+
+SPEAKER DISTRIBUTION
+----------------------------------------
+  SPEAKER_00: 49.4%
+  SPEAKER_01: 11.1%
+
+EMOTION DISTRIBUTION
+----------------------------------------
+  neutral: 44.6%
+  angry: 49.2%
+  sad: 0.6%
+  surprise: 0.2%
+  disgust: 5.3%
+  happy: 0.2%
+
+TIMELINE SUMMARY
+----------------------------------------
+  First Segment: 0.00s
+  Last Segment: 133.93s
+  Total Duration: 133.93s
+
+============================================================
