@@ -27,6 +27,8 @@ except ImportError:
 from src.utils.audio_utils import load_audio, split_audio_chunks
 from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
 from config.settings import ModelConfig
+from src.models.segments import EmotionSegment
+from src.models.base import BaseSegment
 
 
 logger = logging.getLogger(__name__)
@@ -66,33 +68,6 @@ EMOTION_COLORS = {
 }
 
 
-@dataclass
-class EmotionPrediction:
-    """Represents an emotion prediction for a segment."""
-    
-    start: float
-    end: float
-    primary_emotion: str
-    confidence: float
-    all_scores: Dict[str, float]
-    speaker: Optional[str] = None
-    
-    @property
-    def duration(self) -> float:
-        """Get segment duration."""
-        return self.end - self.start
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary."""
-        return {
-            'start': self.start,
-            'end': self.end,
-            'duration': self.duration,
-            'primary_emotion': self.primary_emotion,
-            'confidence': self.confidence,
-            'all_scores': self.all_scores,
-            'speaker': self.speaker
-        }
 
 
 class EmotionAnalyzer:
@@ -209,7 +184,7 @@ class EmotionAnalyzer:
         self,
         audio_chunk: np.ndarray,
         sample_rate: int = 16000
-    ) -> EmotionPrediction:
+    ) -> EmotionSegment:
         """Predict emotion for a single audio chunk.
         
         Args:
@@ -238,23 +213,23 @@ class EmotionAnalyzer:
             primary_emotion = max(scores, key=scores.get)
             confidence = scores[primary_emotion]
             
-            return EmotionPrediction(
+            return EmotionSegment(
                 start=0.0,
                 end=len(audio_chunk) / sample_rate,
-                primary_emotion=primary_emotion,
                 confidence=confidence,
-                all_scores=scores
+                emotion=primary_emotion,
+                scores=scores
             )
             
         except Exception as e:
             logger.warning(f"Emotion prediction failed: {e}")
             # Return neutral emotion on failure
-            return EmotionPrediction(
+            return EmotionSegment(
                 start=0.0,
                 end=len(audio_chunk) / sample_rate,
-                primary_emotion='neutral',
                 confidence=0.5,
-                all_scores={'neutral': 0.5}
+                emotion='neutral',
+                scores={'neutral': 0.5}
             )
     
     def _predict_with_model(
@@ -371,10 +346,10 @@ class EmotionAnalyzer:
     def analyze_segments(
         self,
         audio_path: Union[str, Path],
-        segments: Optional[List[Dict]] = None,
+        segments: Optional[List[Union[Dict, BaseSegment]]] = None,
         chunk_duration: float = 3.0,
         **kwargs
-    ) -> List[EmotionPrediction]:
+    ) -> List[EmotionSegment]:
         """Analyze emotions for audio segments.
         
         Args:
@@ -405,9 +380,19 @@ class EmotionAnalyzer:
                 progress = ProgressLogger(logger, total=len(segments))
                 
                 for segment in segments:
+                    # Handle both dict and BaseSegment types
+                    if isinstance(segment, BaseSegment):
+                        start_time = segment.start
+                        end_time = segment.end
+                        speaker = getattr(segment, 'speaker', None)
+                    else:
+                        start_time = segment['start']
+                        end_time = segment['end']
+                        speaker = segment.get('speaker')
+                    
                     # Extract segment audio
-                    start_sample = int(segment['start'] * sample_rate)
-                    end_sample = int(segment['end'] * sample_rate)
+                    start_sample = int(start_time * sample_rate)
+                    end_sample = int(end_time * sample_rate)
                     segment_audio = audio_data[start_sample:end_sample]
                     
                     if len(segment_audio) > 0:
@@ -415,9 +400,9 @@ class EmotionAnalyzer:
                         pred = self.predict_emotion(segment_audio, sample_rate)
                         
                         # Update with segment info
-                        pred.start = segment['start']
-                        pred.end = segment['end']
-                        pred.speaker = segment.get('speaker')
+                        pred.start = start_time
+                        pred.end = end_time
+                        pred.speaker = speaker
                         
                         predictions.append(pred)
                     
@@ -469,9 +454,9 @@ class EmotionAnalyzer:
     
     def _merge_predictions(
         self,
-        predictions: List[EmotionPrediction],
+        predictions: List[EmotionSegment],
         threshold: float = 0.5
-    ) -> List[EmotionPrediction]:
+    ) -> List[EmotionSegment]:
         """Merge adjacent predictions with same emotion.
         
         Args:
@@ -489,29 +474,33 @@ class EmotionAnalyzer:
         
         for pred in predictions[1:]:
             # Check if same emotion and speaker, and close in time
-            same_emotion = pred.primary_emotion == current.primary_emotion
-            same_speaker = pred.speaker == current.speaker
+            same_emotion = pred.emotion == current.emotion
+            same_speaker = getattr(pred, 'speaker', None) == getattr(current, 'speaker', None)
             close_time = pred.start - current.end < threshold
             
             if same_emotion and same_speaker and close_time:
                 # Merge predictions
                 all_scores = {}
-                for emotion in set(current.all_scores.keys()) | set(pred.all_scores.keys()):
-                    score1 = current.all_scores.get(emotion, 0) * current.duration
-                    score2 = pred.all_scores.get(emotion, 0) * pred.duration
-                    total_duration = current.duration + pred.duration
+                current_duration = current.end - current.start
+                pred_duration = pred.end - pred.start
+                
+                for emotion in set(current.scores.keys()) | set(pred.scores.keys()):
+                    score1 = current.scores.get(emotion, 0) * current_duration
+                    score2 = pred.scores.get(emotion, 0) * pred_duration
+                    total_duration = current_duration + pred_duration
                     all_scores[emotion] = (score1 + score2) / total_duration
                 
-                current = EmotionPrediction(
+                current = EmotionSegment(
                     start=current.start,
                     end=pred.end,
-                    primary_emotion=current.primary_emotion,
-                    confidence=(current.confidence * current.duration + 
-                               pred.confidence * pred.duration) / 
-                              (current.duration + pred.duration),
-                    all_scores=all_scores,
-                    speaker=current.speaker
+                    confidence=(current.confidence * current_duration + 
+                               pred.confidence * pred_duration) / 
+                              (current_duration + pred_duration),
+                    emotion=current.emotion,
+                    scores=all_scores
                 )
+                # Preserve speaker info
+                current.speaker = getattr(current, 'speaker', None)
             else:
                 merged.append(current)
                 current = pred
@@ -524,7 +513,7 @@ class EmotionAnalyzer:
         self,
         audio_chunks: List[np.ndarray],
         sample_rate: int = 16000
-    ) -> List[EmotionPrediction]:
+    ) -> List[EmotionSegment]:
         """Process multiple audio chunks in batch.
         
         Args:
@@ -553,7 +542,7 @@ class EmotionAnalyzer:
     
     def get_emotion_statistics(
         self,
-        predictions: List[EmotionPrediction]
+        predictions: List[EmotionSegment]
     ) -> Dict[str, Any]:
         """Calculate emotion statistics from predictions.
         
@@ -573,15 +562,16 @@ class EmotionAnalyzer:
             }
         
         # Calculate total duration
-        total_duration = sum(pred.duration for pred in predictions)
+        total_duration = sum(pred.end - pred.start for pred in predictions)
         
         # Calculate emotion distribution
         emotion_durations = defaultdict(float)
         confidence_sum = 0.0
         
         for pred in predictions:
-            emotion_durations[pred.primary_emotion] += pred.duration
-            confidence_sum += pred.confidence * pred.duration
+            duration = pred.end - pred.start
+            emotion_durations[pred.emotion] += duration
+            confidence_sum += pred.confidence * duration
         
         # Normalize to percentages
         emotion_distribution = {
@@ -595,7 +585,7 @@ class EmotionAnalyzer:
         # Count emotion changes
         emotion_changes = sum(
             1 for i in range(1, len(predictions))
-            if predictions[i].primary_emotion != predictions[i-1].primary_emotion
+            if predictions[i].emotion != predictions[i-1].emotion
         )
         
         # Calculate average confidence
@@ -612,7 +602,7 @@ class EmotionAnalyzer:
     
     def visualize_emotions(
         self,
-        predictions: List[EmotionPrediction],
+        predictions: List[EmotionSegment],
         audio_duration: float,
         output_path: Optional[Path] = None
     ) -> None:
@@ -630,14 +620,15 @@ class EmotionAnalyzer:
             fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 8))
             
             # Timeline view
-            emotions = list(set(pred.primary_emotion for pred in predictions))
+            emotions = list(set(pred.emotion for pred in predictions))
             emotion_to_y = {emotion: i for i, emotion in enumerate(emotions)}
             
             for pred in predictions:
-                color = EMOTION_COLORS.get(pred.primary_emotion, '#808080')
+                duration = pred.end - pred.start
+                color = EMOTION_COLORS.get(pred.emotion, '#808080')
                 rect = patches.Rectangle(
-                    (pred.start, emotion_to_y[pred.primary_emotion]),
-                    pred.duration,
+                    (pred.start, emotion_to_y[pred.emotion]),
+                    duration,
                     0.8,
                     linewidth=1,
                     edgecolor='black',
@@ -658,7 +649,7 @@ class EmotionAnalyzer:
             # Confidence over time
             times = [(pred.start + pred.end) / 2 for pred in predictions]
             confidences = [pred.confidence for pred in predictions]
-            emotions_colors = [EMOTION_COLORS.get(pred.primary_emotion, '#808080') 
+            emotions_colors = [EMOTION_COLORS.get(pred.emotion, '#808080') 
                               for pred in predictions]
             
             ax2.scatter(times, confidences, c=emotions_colors, alpha=0.6, s=50)

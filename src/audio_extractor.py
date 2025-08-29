@@ -7,13 +7,13 @@ import re
 import tempfile
 import subprocess
 from pathlib import Path
-from typing import Union, Optional, Dict, Any, Tuple
+from typing import Union, Optional, Dict, Any, Tuple, cast
 import logging
 from urllib.parse import urlparse, parse_qs
 
 import yt_dlp
 try:
-    from moviepy.editor import VideoFileClip
+    from moviepy.editor import VideoFileClip  # type: ignore[import-untyped]
 except ImportError:
     VideoFileClip = None
 import ffmpeg
@@ -158,6 +158,10 @@ class AudioExtractor:
             logger.info("Fetching video information...")
             with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
                 info = ydl.extract_info(url, download=False)
+                # Handle case where info might be None or not a dict
+                if not info or not isinstance(info, dict):
+                    raise IOError(f"Failed to extract video information from: {url}")
+                    
                 metadata = {
                     'title': info.get('title', 'Unknown'),
                     'duration': info.get('duration', 0),
@@ -302,7 +306,7 @@ class AudioExtractor:
         audio_path, _ = self.extract_from_video(video_path, **kwargs)
         return audio_path
     
-    def _process_audio_file(self, audio_path: Path, **kwargs) -> Path:
+    def _process_audio_file(self, audio_path: Union[str, Path], **kwargs) -> Path:  # pylint: disable=unused-argument
         """Process existing audio file.
         
         Args:
@@ -312,6 +316,7 @@ class AudioExtractor:
         Returns:
             Path to processed audio
         """
+        audio_path = Path(audio_path)  # Ensure it's a Path object
         # Create temp copy for processing
         temp_path = self.temp_dir / f"processed_{audio_path.name}"
         
@@ -332,7 +337,7 @@ class AudioExtractor:
         self,
         video_path: Path,
         output_path: Optional[Path] = None,
-        **kwargs
+        **kwargs  # pylint: disable=unused-argument
     ) -> Path:
         """Extract audio using MoviePy.
         
@@ -381,7 +386,7 @@ class AudioExtractor:
         self,
         video_path: Path,
         output_path: Optional[Path] = None,
-        **kwargs
+        **kwargs  # pylint: disable=unused-argument
     ) -> Path:
         """Extract audio using FFmpeg.
         
@@ -506,7 +511,7 @@ class AudioExtractor:
         try:
             result = urlparse(source)
             return all([result.scheme, result.netloc])
-        except:
+        except Exception:
             return False
     
     def _is_youtube_url(self, url: str) -> bool:
@@ -574,7 +579,7 @@ class AudioExtractor:
         try:
             path = Path(source)
             return path.exists() and path.suffix.lower() in video_extensions
-        except:
+        except Exception:
             return False
     
     def _get_video_metadata(self, video_path: Path) -> Dict[str, Any]:
@@ -640,7 +645,7 @@ class AudioExtractor:
                 num, den = fps_str.split('/')
                 return float(num) / float(den)
             return float(fps_str)
-        except:
+        except Exception:
             return 0.0
     
     def _choose_optimal_method(self, metadata: Dict[str, Any]) -> str:
@@ -688,7 +693,6 @@ class AudioExtractor:
             Path to extracted audio
         """
         import concurrent.futures
-        import tempfile
         
         # Create temporary paths for each method
         temp_paths = {

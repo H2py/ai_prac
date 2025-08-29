@@ -87,11 +87,6 @@ logger = setup_logger(
     help='Export raw acoustic features'
 )
 @click.option(
-    '--visualize/--no-visualize',
-    default=False,
-    help='Generate visualization plots'
-)
-@click.option(
     '--enable-stt/--no-stt',
     default=False,
     help='Enable speech-to-text transcription'
@@ -140,7 +135,6 @@ def main(
     min_segment_length: float,
     emotion_threshold: float,
     export_features: bool,
-    visualize: bool,
     enable_stt: bool,
     stt_language: Optional[str],
     export_ass: bool,
@@ -209,7 +203,6 @@ def main(
         pipeline_config.output.output_dir = Path(output)
         pipeline_config.output.output_format = [format] if format != 'both' else ['json', 'csv']
         pipeline_config.output.include_raw_features = export_features
-        pipeline_config.output.generate_visualizations = visualize
         pipeline_config.processing.verbose = verbose
         
         # Validate configuration
@@ -526,34 +519,6 @@ def main(
             except Exception as e:
                 click.echo(click.style(f"⚠️  ASS export failed: {str(e)[:100]}", fg='yellow'))
                 logger.warning(f"ASS export failed: {e}")
-        
-        # Generate visualizations if requested
-        if visualize:
-            click.echo("\n" + click.style("📈 Generating Visualizations", fg='yellow', bold=True))
-            try:
-                from src.utils.visualization import create_visualization_report
-                from src.utils.audio_utils import load_audio
-                
-                # Load audio for visualization
-                audio_data, sr = load_audio(extracted_audio, sample_rate=pipeline_config.audio.sample_rate)
-                
-                viz_dir = pipeline_config.output.output_dir / "visualizations"
-                viz_files = create_visualization_report(
-                    results,
-                    audio_data=audio_data,
-                    sample_rate=sr,
-                    output_dir=viz_dir,
-                    include_waveform=True,
-                    include_spectrogram=True
-                )
-                
-                if viz_files:
-                    click.echo(click.style(f"✅ Generated {len(viz_files)} visualization plots", fg='green'))
-                    for plot_name, plot_path in viz_files.items():
-                        click.echo(f"  • {plot_name}: {plot_path}")
-            except Exception as e:
-                click.echo(click.style(f"⚠️  Visualization generation failed: {str(e)[:100]}", fg='yellow'))
-                logger.warning(f"Visualization failed: {e}")
         
         # Show brief summary
         if results.get('summary'):

@@ -129,12 +129,6 @@ class AudioAnalysisPipeline:
                     context
                 )
             
-            # Generate visualizations if requested
-            self.result_processor.generate_visualizations(
-                processed_results['results'], 
-                context
-            )
-            
             # Display summary
             self.result_processor.display_summary(processed_results['results'])
             

@@ -111,6 +111,10 @@ class SpeakerDiarizationStep(PipelineStep):
             
             # Initialize and analyze
             diarizer.initialize(auth_token=auth_token)
+            
+            if not context.audio_file:
+                raise ValueError("No audio file available for speaker diarization")
+                
             speaker_results = diarizer.analyze(
                 context.audio_file,
                 extract_embeddings=False
@@ -177,6 +181,9 @@ class EmotionAnalysisStep(PipelineStep):
             emotion_analyzer = EmotionAnalyzer(self.config.model)
             emotion_analyzer.initialize()
             
+            if not context.audio_file:
+                raise ValueError("No audio file available for emotion analysis")
+            
             # Use speaker segments if available, otherwise analyze whole audio
             if context.speaker_results and context.speaker_results.get('segments'):
                 emotion_predictions = emotion_analyzer.analyze_segments(
@@ -230,6 +237,10 @@ class AcousticAnalysisStep(PipelineStep):
         
         try:
             acoustic_analyzer = AcousticAnalyzer()
+            
+            if not context.audio_file:
+                raise ValueError("No audio file available for acoustic analysis")
+                
             acoustic_features = acoustic_analyzer.analyze(context.audio_file)
             
             # Store results
@@ -243,10 +254,10 @@ class AcousticAnalysisStep(PipelineStep):
                 if acoustic_features[0]:
                     sample = acoustic_features[0]
                     click.echo("  Sample features from first segment:")
-                    click.echo(f"    • RMS Energy: {sample.get('rms_energy', 0):.4f}")
-                    click.echo(f"    • Spectral Centroid: {sample.get('spectral_centroid', 0):.1f} Hz")
-                    if sample.get('pitch_mean'):
-                        click.echo(f"    • Mean Pitch: {sample['pitch_mean']:.1f} Hz")
+                    click.echo(f"    • RMS Energy: {sample.rms_energy or 0:.4f}")
+                    click.echo(f"    • Spectral Centroid: {sample.spectral_centroid or 0:.1f} Hz")
+                    if sample.pitch_mean:
+                        click.echo(f"    • Mean Pitch: {sample.pitch_mean:.1f} Hz")
             else:
                 click.echo(click.style("⚠️  No acoustic features extracted", fg='yellow'))
             
@@ -289,6 +300,9 @@ class SpeechRecognitionStep(PipelineStep):
             segments_for_stt = None
             if context.speaker_results and context.speaker_results.get('segments'):
                 segments_for_stt = context.speaker_results['segments']
+            
+            if not context.audio_file:
+                raise ValueError("No audio file available for speech recognition")
             
             # Detect language if not specified
             if self.stt_language == 'auto' or self.stt_language is None:

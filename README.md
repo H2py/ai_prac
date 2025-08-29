@@ -89,7 +89,7 @@ python main.py audio.wav --format csv
 python main.py audio.wav --format both
 
 # 시각화 포함
-python main.py audio.wav --visualize
+python main.py audio.wav --verbose
 
 # 사용자 지정 출력 디렉토리
 python main.py audio.wav --output ./my_results
@@ -111,7 +111,6 @@ python main.py audio.wav \
     --format both \
     --enable-stt \
     --export-ass \
-    --visualize \
     --verbose
 ```
 
@@ -124,7 +123,6 @@ python main.py audio.wav \
 | `timeline_*.csv` | 스프레드시트 형식 |
 | `subtitles_*.ass` | ASS 자막 파일 (--export-ass 사용 시) 🆕 |
 | `extracted_audio_*.wav` | 처리된 오디오 |
-| `visualizations/*.png` | 그래프 (--visualize 사용 시) |
 
 ### 결과 이해하기
 
@@ -173,7 +171,6 @@ python main.py audio.wav \
 | `--stt-language` | STT 언어 (ko, en, auto) 🆕 | auto |
 | `--export-ass` | ASS 자막 파일 생성 🆕 | False |
 | `--require-all` | 모든 단계 필수 (실패 시 중단) 🆕 | False |
-| `--visualize` | 플롯 생성 | False |
 | `--verbose, -v` | 진행 상황 표시 | False |
 | `--gpu/--no-gpu` | GPU 가속 | `--gpu` |
 | `--sample-rate` | 샘플 레이트 (Hz) | 16000 |

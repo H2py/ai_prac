@@ -8,10 +8,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Union, Tuple
 import logging
 from datetime import datetime
-import pandas as pd
 
-from src.speaker_diarizer import SpeakerSegment
-from src.emotion_analyzer import EmotionPrediction
+from src.models.segments import SpeakerSegment, EmotionSegment, AcousticSegment
 from src.utils.logger import PerformanceLogger
 
 logger = logging.getLogger(__name__)
@@ -36,9 +34,9 @@ class EnhancedResultMerger:
         
     def merge_all_results(
         self,
-        speaker_results: Optional[Dict[str, Any]] = None,
-        emotion_results: Optional[List[EmotionPrediction]] = None,
-        acoustic_results: Optional[List[Dict]] = None,
+        speaker_results: Optional[Union[Dict[str, Any], List[SpeakerSegment]]] = None,
+        emotion_results: Optional[List[EmotionSegment]] = None,
+        acoustic_results: Optional[List[Union[Dict, AcousticSegment]]] = None,
         transcription_results: Optional[List[Dict]] = None,
         metadata: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
@@ -145,46 +143,91 @@ class EnhancedResultMerger:
             'chinese': 'zh'
         }
         
-        return language_map.get(lang.lower(), lang[:2].lower())
+        return language_map.get(lang.lower(), lang[:2].lower() if lang else 'en')
     
-    def _process_diarization(self, speaker_results: Dict) -> Dict[str, Any]:
+    def _process_diarization(self, speaker_results: Union[Dict, List[SpeakerSegment]]) -> Dict[str, Any]:
         """Process speaker diarization with enhanced format."""
         diarization = {
             'turns': [],
             'speakers': {}
         }
         
-        segments = speaker_results.get('segments', [])
-        speakers = speaker_results.get('speakers', {})
+        if isinstance(speaker_results, list):
+            # Handle list of SpeakerSegment objects
+            segments = speaker_results
+            speakers = {}
+            
+            # Calculate speaker statistics
+            speaker_stats = {}
+            for segment in segments:
+                speaker_id = segment.speaker_id
+                if speaker_id not in speaker_stats:
+                    speaker_stats[speaker_id] = {
+                        'total_duration': 0,
+                        'segment_count': 0,
+                        'confidence_sum': 0
+                    }
+                
+                duration = segment.end - segment.start
+                speaker_stats[speaker_id]['total_duration'] += duration
+                speaker_stats[speaker_id]['segment_count'] += 1
+                speaker_stats[speaker_id]['confidence_sum'] += segment.confidence
+            
+            # Create speaker profiles
+            total_duration = sum(s.end - s.start for s in segments)
+            for speaker_id, stats in speaker_stats.items():
+                diarization['speakers'][speaker_id] = {
+                    'id': speaker_id,
+                    'total_duration': stats['total_duration'],
+                    'speaking_percentage': (stats['total_duration'] / total_duration * 100) if total_duration > 0 else 0,
+                    'segment_count': stats['segment_count'],
+                    'average_confidence': stats['confidence_sum'] / stats['segment_count'] if stats['segment_count'] > 0 else 0
+                }
+            
+            # Process turns with segment IDs
+            for idx, segment in enumerate(segments):
+                turn = {
+                    'segment_id': f"seg_{idx+1:04d}",
+                    'start': segment.start,
+                    'end': segment.end,
+                    'speaker': segment.speaker_id,
+                    'confidence': segment.confidence
+                }
+                diarization['turns'].append(turn)
         
-        # Create speaker profiles
-        for speaker_id, speaker_info in speakers.items():
-            diarization['speakers'][speaker_id] = {
-                'id': speaker_id,
-                'total_duration': speaker_info.get('total_duration', 0),
-                'speaking_percentage': speaker_info.get('speaking_percentage', 0),
-                'segment_count': speaker_info.get('segment_count', 0),
-                'average_confidence': speaker_info.get('average_confidence', 0)
-            }
-        
-        # Process turns with segment IDs
-        for idx, segment in enumerate(segments):
-            turn = {
-                'segment_id': f"seg_{idx+1:04d}",
-                'start': segment['start'],
-                'end': segment['end'],
-                'speaker': segment['speaker'],
-                'confidence': segment.get('confidence', 0.5)
-            }
-            diarization['turns'].append(turn)
+        else:
+            # Handle legacy dict format
+            segments = speaker_results.get('segments', [])
+            speakers = speaker_results.get('speakers', {})
+            
+            # Create speaker profiles
+            for speaker_id, speaker_info in speakers.items():
+                diarization['speakers'][speaker_id] = {
+                    'id': speaker_id,
+                    'total_duration': speaker_info.get('total_duration', 0),
+                    'speaking_percentage': speaker_info.get('speaking_percentage', 0),
+                    'segment_count': speaker_info.get('segment_count', 0),
+                    'average_confidence': speaker_info.get('average_confidence', 0)
+                }
+            
+            # Process turns with segment IDs
+            for idx, segment in enumerate(segments):
+                turn = {
+                    'segment_id': f"seg_{idx+1:04d}",
+                    'start': segment['start'],
+                    'end': segment['end'],
+                    'speaker': segment['speaker'],
+                    'confidence': segment.get('confidence', 0.5)
+                }
+                diarization['turns'].append(turn)
         
         return diarization
     
     def _process_transcriptions(
         self, 
         transcriptions: List[Dict],
-        speaker_results: Optional[Dict],
-        acoustic_results: Optional[List[Dict]]
+        speaker_results: Optional[Union[Dict, List[SpeakerSegment]]],
+        acoustic_results: Optional[List[Union[Dict, AcousticSegment]]]
     ) -> List[Dict]:
         """Process transcriptions with word-level timing and phonetics."""
         utterances = []
@@ -192,9 +235,16 @@ class EnhancedResultMerger:
         # Map segments to speakers
         speaker_map = {}
         if speaker_results:
-            for segment in speaker_results.get('segments', []):
-                key = (segment['start'], segment['end'])
-                speaker_map[key] = segment['speaker']
+            if isinstance(speaker_results, list):
+                # Handle list of SpeakerSegment objects
+                for segment in speaker_results:
+                    key = (segment.start, segment.end)
+                    speaker_map[key] = segment.speaker_id
+            else:
+                # Handle legacy dict format
+                for segment in speaker_results.get('segments', []):
+                    key = (segment['start'], segment['end'])
+                    speaker_map[key] = segment['speaker']
         
         for idx, trans in enumerate(transcriptions):
             # Find matching speaker
@@ -230,7 +280,7 @@ class EnhancedResultMerger:
         
         return utterances
     
-    def _process_words(self, words: List[Dict], acoustic_results: Optional[List[Dict]]) -> List[Dict]:
+    def _process_words(self, words: List[Dict], acoustic_results: Optional[List[Union[Dict, AcousticSegment]]]) -> List[Dict]:
         """Process word-level information with phonetics and prosody."""
         processed_words = []
         
@@ -253,8 +303,8 @@ class EnhancedResultMerger:
                     acoustic_results
                 )
                 if prosody:
-                    word['pitch_hz'] = prosody.get('pitch_mean', 0)
-                    word['volume_db'] = prosody.get('energy_rms', 0)
+                    word['pitch_hz'] = prosody.get('pitch_mean', 0) if isinstance(prosody, dict) else 0
+                    word['volume_db'] = prosody.get('energy_rms', 0) if isinstance(prosody, dict) else 0
             
             processed_words.append(word)
         
@@ -265,7 +315,7 @@ class EnhancedResultMerger:
         text: str,
         start: float,
         end: float,
-        acoustic_results: Optional[List[Dict]]
+        acoustic_results: Optional[List[Union[Dict, AcousticSegment]]]
     ) -> List[Dict]:
         """Generate word-level timing when not available."""
         words = text.split()
@@ -297,8 +347,8 @@ class EnhancedResultMerger:
                     acoustic_results
                 )
                 if prosody:
-                    word_info['pitch_hz'] = prosody.get('pitch_mean', 0)
-                    word_info['volume_db'] = prosody.get('energy_rms', 0)
+                    word_info['pitch_hz'] = prosody.get('pitch_mean', 0) if isinstance(prosody, dict) else 0
+                    word_info['volume_db'] = prosody.get('energy_rms', 0) if isinstance(prosody, dict) else 0
             
             word_list.append(word_info)
             current_time = word_end
@@ -344,53 +394,101 @@ class EnhancedResultMerger:
         self,
         start: float,
         end: float,
-        acoustic_results: List[Dict]
+        acoustic_results: List[Union[Dict, AcousticSegment]]
     ) -> Optional[Dict]:
         """Get prosodic features for a time range."""
         for segment in acoustic_results:
-            seg_start = segment.get('start', 0)
-            seg_end = segment.get('end', 0)
-            
-            # Check if times overlap
-            if seg_start <= start < seg_end or seg_start < end <= seg_end:
-                return {
-                    'pitch_mean': segment.get('pitch', {}).get('mean', 0),
-                    'pitch_std': segment.get('pitch', {}).get('std', 0),
-                    'energy_rms': segment.get('energy', {}).get('rms', 0) * -20  # Convert to dB
-                }
+            if isinstance(segment, AcousticSegment):
+                seg_start = segment.start
+                seg_end = segment.end
+                
+                # Check if times overlap
+                if seg_start <= start < seg_end or seg_start < end <= seg_end:
+                    features = segment.features or {}
+                    pitch_info = features.get('pitch', {})
+                    energy_info = features.get('energy', {})
+                    
+                    return {
+                        'pitch_mean': pitch_info.get('mean', 0) if isinstance(pitch_info, dict) else 0,
+                        'pitch_std': pitch_info.get('std', 0) if isinstance(pitch_info, dict) else 0,
+                        'energy_rms': (energy_info.get('rms', 0) if isinstance(energy_info, dict) else 0) * -20  # Convert to dB
+                    }
+            else:
+                # Handle legacy dict format
+                seg_start = segment.get('start', 0)
+                seg_end = segment.get('end', 0)
+                
+                # Check if times overlap
+                if seg_start <= start < seg_end or seg_start < end <= seg_end:
+                    return {
+                        'pitch_mean': segment.get('pitch', {}).get('mean', 0),
+                        'pitch_std': segment.get('pitch', {}).get('std', 0),
+                        'energy_rms': segment.get('energy', {}).get('rms', 0) * -20  # Convert to dB
+                    }
         
         return None
     
-    def _process_prosody(self, acoustic_results: List[Dict]) -> List[Dict]:
+    def _process_prosody(self, acoustic_results: List[Union[Dict, AcousticSegment]]) -> List[Dict]:
         """Process prosodic features with linguistic standards."""
         prosody_segments = []
         
         for segment in acoustic_results:
-            prosody = {
-                'start': segment.get('start', 0),
-                'end': segment.get('end', 0),
-                'pitch': {
-                    'mean_hz': segment.get('pitch', {}).get('mean', 0),
-                    'std_hz': segment.get('pitch', {}).get('std', 0),
-                    'min_hz': segment.get('pitch', {}).get('min', 0),
-                    'max_hz': segment.get('pitch', {}).get('max', 0),
-                    'contour': 'falling' if segment.get('pitch', {}).get('mean', 0) > 200 else 'rising'
-                },
-                'intensity': {
-                    'mean_db': segment.get('energy', {}).get('rms', 0) * -20,
-                    'max_db': segment.get('energy', {}).get('rms', 0) * -15
-                },
-                'speech_rate': {
-                    'syllables_per_second': segment.get('tempo', 120) / 60 * 2  # Approximation
-                },
-                'voice_quality': segment.get('voice_quality', {})
-            }
+            if isinstance(segment, AcousticSegment):
+                features = segment.features or {}
+                pitch_info = features.get('pitch', {}) or {}
+                energy_info = features.get('energy', {}) or {}
+                voice_quality_info = features.get('voice_quality', {}) or {}
+                tempo = features.get('tempo', 120)
+                # Ensure tempo is a number, not a dict
+                if isinstance(tempo, dict):
+                    tempo = 120
+                
+                prosody = {
+                    'start': segment.start,
+                    'end': segment.end,
+                    'pitch': {
+                        'mean_hz': pitch_info.get('mean', 0) if isinstance(pitch_info, dict) else 0,
+                        'std_hz': pitch_info.get('std', 0) if isinstance(pitch_info, dict) else 0,
+                        'min_hz': pitch_info.get('min', 0) if isinstance(pitch_info, dict) else 0,
+                        'max_hz': pitch_info.get('max', 0) if isinstance(pitch_info, dict) else 0,
+                        'contour': 'falling' if (pitch_info.get('mean', 0) if isinstance(pitch_info, dict) else 0) > 200 else 'rising'
+                    },
+                    'intensity': {
+                        'mean_db': (energy_info.get('rms', 0) if isinstance(energy_info, dict) else 0) * -20,
+                        'max_db': (energy_info.get('rms', 0) if isinstance(energy_info, dict) else 0) * -15
+                    },
+                    'speech_rate': {
+                        'syllables_per_second': tempo / 60 * 2 if tempo else 2  # Approximation
+                    },
+                    'voice_quality': voice_quality_info
+                }
+            else:
+                # Handle legacy dict format
+                prosody = {
+                    'start': segment.get('start', 0),
+                    'end': segment.get('end', 0),
+                    'pitch': {
+                        'mean_hz': segment.get('pitch', {}).get('mean', 0),
+                        'std_hz': segment.get('pitch', {}).get('std', 0),
+                        'min_hz': segment.get('pitch', {}).get('min', 0),
+                        'max_hz': segment.get('pitch', {}).get('max', 0),
+                        'contour': 'falling' if segment.get('pitch', {}).get('mean', 0) > 200 else 'rising'
+                    },
+                    'intensity': {
+                        'mean_db': segment.get('energy', {}).get('rms', 0) * -20,
+                        'max_db': segment.get('energy', {}).get('rms', 0) * -15
+                    },
+                    'speech_rate': {
+                        'syllables_per_second': segment.get('tempo', 120) / 60 * 2  # Approximation
+                    },
+                    'voice_quality': segment.get('voice_quality', {})
+                }
             
             prosody_segments.append(prosody)
         
         return prosody_segments
     
-    def _process_emotions(self, emotion_results: List[EmotionPrediction]) -> List[Dict]:
+    def _process_emotions(self, emotion_results: List[EmotionSegment]) -> List[Dict]:
         """Process emotions with PAD model and standardized labels."""
         emotion_segments = []
         
@@ -406,16 +504,13 @@ class EnhancedResultMerger:
         }
         
         for emotion in emotion_results:
-            emotion_dict = emotion.to_dict() if hasattr(emotion, 'to_dict') else emotion
-            primary = emotion_dict.get('primary_emotion', 'neutral')
-            
             segment = {
-                'start': emotion_dict.get('start', 0),
-                'end': emotion_dict.get('end', 0),
-                'primary_emotion': primary,
-                'confidence': emotion_dict.get('confidence', 0),
-                'pad_model': pad_values.get(primary, pad_values['neutral']),
-                'emotion_probabilities': emotion_dict.get('emotion_scores', {})
+                'start': emotion.start,
+                'end': emotion.end,
+                'primary_emotion': emotion.predicted_emotion,
+                'confidence': emotion.confidence,
+                'pad_model': pad_values.get(emotion.predicted_emotion, pad_values['neutral']),
+                'emotion_probabilities': emotion.emotion_scores or {}
             }
             
             emotion_segments.append(segment)
@@ -509,14 +604,14 @@ class EnhancedResultMerger:
         if emotions:
             emotion_counts = {}
             for segment in emotions:
-                emotion = segment['primary_emotion']
+                emotion = segment.get('primary_emotion', 'neutral')
                 emotion_counts[emotion] = emotion_counts.get(emotion, 0) + 1
             
             stats['emotional'] = {
                 'emotion_distribution': emotion_counts,
-                'dominant_emotion': max(emotion_counts, key=emotion_counts.get) if emotion_counts else 'neutral',
+                'dominant_emotion': max(emotion_counts.items(), key=lambda x: x[1])[0] if emotion_counts else 'neutral',
                 'emotion_changes': len([i for i in range(1, len(emotions)) 
-                                       if emotions[i]['primary_emotion'] != emotions[i-1]['primary_emotion']])
+                                       if emotions[i].get('primary_emotion') != emotions[i-1].get('primary_emotion')])
             }
         
         return stats

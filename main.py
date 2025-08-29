@@ -129,11 +129,6 @@ class CLIManager:
     help='Export raw acoustic features'
 )
 @click.option(
-    '--visualize/--no-visualize',
-    default=False,
-    help='Generate visualization plots'
-)
-@click.option(
     '--enable-stt/--no-stt',
     default=False,
     help='Enable speech-to-text transcription'
@@ -200,7 +195,6 @@ def main(
     min_segment_length: float,
     emotion_threshold: float,
     export_features: bool,
-    visualize: bool,
     enable_stt: bool,
     stt_language: Optional[str],
     export_ass: bool,
@@ -261,7 +255,6 @@ def main(
             min_segment_length=min_segment_length,
             emotion_threshold=emotion_threshold,
             export_features=export_features,
-            visualize=visualize,
             verbose=verbose,
             require_all=require_all,
             video_method=video_method,
@@ -343,7 +336,6 @@ def _override_config_with_cli_params(config: Config, **params) -> None:
             config.output.default_formats.append('frontend_json')
     
     config.output.include_raw_features = params['export_features']
-    config.output.generate_visualizations = params['visualize']
     config.output.enable_backend_api = params.get('enable_backend_api', False)
     config.output.enable_frontend_json = params.get('enable_frontend_json', False)
     

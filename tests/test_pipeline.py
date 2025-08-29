@@ -70,15 +70,21 @@ def test_pipeline():
         # Test speaker diarization
         print("\n3. Testing speaker diarization...")
         from src.speaker_diarizer import SpeakerDiarizer
+        import os
         try:
             diarizer = SpeakerDiarizer()
-            diarizer.initialize()
-            speaker_results = diarizer.analyze(extracted)
-            if speaker_results and speaker_results.get('segments'):
-                print(f"   ✅ Found {speaker_results['total_speakers']} speakers")
-                print(f"   ✅ Generated {speaker_results['total_segments']} segments")
+            auth_token = os.getenv('HUGGINGFACE_TOKEN')
+            if not auth_token:
+                print("   ⚠️  HUGGINGFACE_TOKEN not found, skipping diarization")
+                speaker_results = None
             else:
-                print("   ⚠️  Using fallback diarization (demo mode)")
+                diarizer.initialize(auth_token=auth_token)
+                speaker_results = diarizer.analyze(extracted)
+                if speaker_results and speaker_results.get('segments'):
+                    print(f"   ✅ Found {speaker_results['total_speakers']} speakers")
+                    print(f"   ✅ Generated {speaker_results['total_segments']} segments")
+                else:
+                    print("   ⚠️  Using fallback diarization (demo mode)")
         except Exception as e:
             print(f"   ⚠️  Diarization skipped: {str(e)[:100]}")
             speaker_results = None

@@ -4,10 +4,13 @@ Voice Activity Detection module using Silero VAD for performance-optimized speec
 
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Union
 import numpy as np
 import torch
 from dataclasses import dataclass
+
+# Import new models for compatibility
+from src.models.segments import SpeechSegment as NewSpeechSegment
 
 from src.utils.audio_utils import load_audio
 from src.utils.logger import PerformanceLogger
@@ -45,7 +48,7 @@ class VADProcessor:
             config: Whisper configuration with VAD settings
         """
         self.config = config
-        self.model = None
+        self.model: Optional[Any] = None  # PyTorch model type varies by implementation
         self.sample_rate = 16000  # Silero VAD requires 16kHz
         
     def initialize(self):
@@ -55,7 +58,7 @@ class VADProcessor:
             return
             
         try:
-            import silero_vad
+            import silero_vad  # type: ignore[import-not-found]
             
             logger.info(f"Loading Silero VAD model in {self.config.vad_mode} mode")
             
@@ -68,19 +71,24 @@ class VADProcessor:
                 model_name = "silero_vad_v5"
             
             # Load pre-trained model
-            self.model, _ = torch.hub.load(
+            model_result = torch.hub.load(
                 repo_or_dir='snakers4/silero-vad',
                 model=model_name,
                 force_reload=False,
                 verbose=False
             )
+            # Handle both tuple and single return cases
+            if isinstance(model_result, tuple):
+                self.model, _ = model_result
+            else:
+                self.model = model_result
             
             # Set to evaluation mode for inference
-            self.model.eval()
+            self.model.eval()  # type: ignore[attr-defined]
             
             # Determine device
             device = "cuda" if torch.cuda.is_available() else "cpu"
-            self.model = self.model.to(device)
+            self.model = self.model.to(device)  # type: ignore[attr-defined]
             
             logger.info(f"Silero VAD loaded successfully on {device}")
             
@@ -191,7 +199,7 @@ class VADProcessor:
                     segment_duration = segment_end - current_segment_start
                     
                     if segment_duration >= min_duration:
-                        avg_confidence = np.mean(current_segment_confidences)
+                        avg_confidence = float(np.mean(current_segment_confidences))
                         segment = SpeechSegment(
                             start=current_segment_start,
                             end=segment_end,
@@ -210,7 +218,7 @@ class VADProcessor:
             segment_duration = segment_end - current_segment_start
             
             if segment_duration >= min_duration:
-                avg_confidence = np.mean(current_segment_confidences)
+                avg_confidence = float(np.mean(current_segment_confidences))
                 segment = SpeechSegment(
                     start=current_segment_start,
                     end=segment_end,
@@ -239,11 +247,15 @@ class VADProcessor:
                 chunk_tensor = chunk_tensor.mean(dim=0)
             
             # Move to same device as model
-            chunk_tensor = chunk_tensor.to(next(self.model.parameters()).device)
+            if self.model is not None:
+                chunk_tensor = chunk_tensor.to(next(self.model.parameters()).device)  # type: ignore[attr-defined]
             
             # Get speech probability
+            if self.model is None:
+                return False, 0.0
+                
             with torch.no_grad():
-                speech_prob = self.model(chunk_tensor, self.sample_rate).item()
+                speech_prob = self.model(chunk_tensor, self.sample_rate).item()  # type: ignore[misc]
             
             is_speech = speech_prob > self.config.vad_threshold
             
