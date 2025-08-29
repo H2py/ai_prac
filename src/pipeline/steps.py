@@ -32,11 +32,28 @@ class AudioExtractionStep(PipelineStep):
             # Generate output path
             audio_output_path = context.get_output_path("extracted_audio", "wav")
             
-            # Extract audio
-            extracted_audio = extractor.extract(
-                context.input_source,
-                output_path=audio_output_path
-            )
+            # Extract audio (enhanced with video metadata)
+            if extractor._is_video_file(context.input_source) or extractor._is_url(context.input_source):
+                # For video files or URLs, get enhanced metadata
+                if extractor._is_video_file(context.input_source):
+                    extracted_audio, video_metadata = extractor.extract_from_video(
+                        context.input_source,
+                        output_path=audio_output_path,
+                        method=self.config.video.extraction_method
+                    )
+                    context.video_metadata = video_metadata
+                else:
+                    # URL extraction (including YouTube embed support)
+                    extracted_audio = extractor.extract(
+                        context.input_source,
+                        output_path=audio_output_path
+                    )
+            else:
+                # Standard audio extraction
+                extracted_audio = extractor.extract(
+                    context.input_source,
+                    output_path=audio_output_path
+                )
             
             # Store results in context
             context.audio_file = extracted_audio
@@ -51,6 +68,15 @@ class AudioExtractionStep(PipelineStep):
             click.echo(f"  • Sample Rate: {context.audio_info['sample_rate']} Hz")
             click.echo(f"  • Channels: {context.audio_info['channels']}")
             click.echo(f"  • File Size: {context.audio_info['file_size_mb']:.2f} MB")
+            
+            # Show video info if available
+            if hasattr(context, 'video_metadata') and context.video_metadata:
+                click.echo(click.style("🎬 Video Information:", fg='cyan'))
+                click.echo(f"  • Resolution: {context.video_metadata.get('resolution', 'unknown')}")
+                click.echo(f"  • Video Codec: {context.video_metadata.get('video_codec', 'unknown')}")
+                click.echo(f"  • Format: {context.video_metadata.get('format', 'unknown')}")
+                if context.video_metadata.get('fps', 0) > 0:
+                    click.echo(f"  • FPS: {context.video_metadata['fps']:.2f}")
             
             duration = time.time() - start_time
             context.mark_step_completed(self.name, duration)

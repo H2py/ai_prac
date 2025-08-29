@@ -55,6 +55,8 @@ class AudioAnalysisPipeline:
         self.stt_language = kwargs.get('stt_language', None)
         self.export_ass = kwargs.get('export_ass', False)
         self.use_enhanced_format = kwargs.get('use_enhanced_format', False)
+        self.output_formats = kwargs.get('output_formats', ['json'])
+        self.processing_start_time = None
         
         # Initialize pipeline steps
         self.steps = self._create_pipeline_steps()
@@ -90,6 +92,7 @@ class AudioAnalysisPipeline:
         """
         # Start performance timing
         self.perf_logger.start_timer("total_processing")
+        self.processing_start_time = time.time()
         
         # Create pipeline context
         context = PipelineContext(input_source, self.config)
@@ -103,10 +106,12 @@ class AudioAnalysisPipeline:
                 if not self._execute_step(step, context, i):
                     break
             
-            # Process and export results
+            # Process and export results using enhanced system
             processed_results = self.result_processor.process_results(
                 context, 
-                use_enhanced_format=self.use_enhanced_format
+                use_enhanced_format=self.use_enhanced_format,
+                output_formats=self.output_formats,
+                processing_start_time=self.processing_start_time
             )
             
             # Generate summary report
@@ -280,6 +285,41 @@ class PipelineBuilder:
     def use_enhanced_format(self) -> 'PipelineBuilder':
         """Use enhanced output format."""
         self.options['use_enhanced_format'] = True
+        return self
+    
+    def with_output_formats(self, formats: List[str]) -> 'PipelineBuilder':
+        """Set output formats for results."""
+        self.options['output_formats'] = formats
+        return self
+    
+    def enable_backend_api(self) -> 'PipelineBuilder':
+        """Enable backend API output format."""
+        current_formats = self.options.get('output_formats', ['json'])
+        if 'backend_api' not in current_formats:
+            current_formats.append('backend_api')
+        self.options['output_formats'] = current_formats
+        return self
+    
+    def enable_frontend_json(self) -> 'PipelineBuilder':
+        """Enable frontend JSON output format."""
+        current_formats = self.options.get('output_formats', ['json'])
+        if 'frontend_json' not in current_formats:
+            current_formats.append('frontend_json')
+        self.options['output_formats'] = current_formats
+        return self
+    
+    def with_video_method(self, method: str) -> 'PipelineBuilder':
+        """Set video extraction method."""
+        valid_methods = ['auto', 'moviepy', 'ffmpeg', 'parallel']
+        if method not in valid_methods:
+            raise ValueError(f"Invalid video method: {method}. Must be one of {valid_methods}")
+        
+        # Update config if available
+        if self.config:
+            self.config.video.extraction_method = method
+        else:
+            # Store for later
+            self.options['video_method'] = method
         return self
     
     def build(self) -> AudioAnalysisPipeline:
