@@ -4,6 +4,7 @@ Error handling and result processing for the pipeline.
 
 import logging
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List
@@ -14,6 +15,7 @@ from .base import PipelineContext, AuthenticationError, ModelLoadError
 from ..result_merger import ResultMerger
 from ..enhanced_result_merger import EnhancedResultMerger
 from ..ass_exporter import ASSExporter
+from ..output_manager import OutputFormatManager, MediaInfo, ProcessingMetadata
 from config.settings import Config
 
 
@@ -115,18 +117,26 @@ class ResultProcessor:
         self.config = config
         self.logger = logging.getLogger(__name__)
     
-    def process_results(self, context: PipelineContext, use_enhanced_format: bool = False) -> Dict[str, Any]:
+    def process_results(
+        self, 
+        context: PipelineContext, 
+        use_enhanced_format: bool = False,
+        output_formats: List[str] = None,
+        processing_start_time: float = None
+    ) -> Dict[str, Any]:
         """
-        Process and export all pipeline results.
+        Process and export all pipeline results using enhanced output system.
         
         Args:
             context: Pipeline context with all results
             use_enhanced_format: Whether to use enhanced output format
+            output_formats: List of desired output formats
+            processing_start_time: Start time for performance calculation
             
         Returns:
             Dictionary containing processed results and file paths
         """
-        click.echo(f"\n{click.style('🔄 Step 6: Merging Results', fg='yellow', bold=True)}")
+        click.echo(f"\n{click.style('🔄 Step 6: Processing Results', fg='yellow', bold=True)}")
         
         # Create merger
         if use_enhanced_format:
@@ -141,8 +151,10 @@ class ResultProcessor:
         
         click.echo(click.style("✅ Results merged successfully", fg='green'))
         
-        # Export results
-        exported_files = self._export_results(merger, merged_results, context, use_enhanced_format)
+        # Use enhanced output system
+        exported_files = self._export_enhanced_results(
+            merged_results, context, output_formats, processing_start_time
+        )
         
         return {
             'results': merged_results,
@@ -150,7 +162,77 @@ class ResultProcessor:
             'merger': merger
         }
     
-    def _export_results(self, merger, results: Dict[str, Any], context: PipelineContext, use_enhanced_format: bool) -> Dict[str, Path]:
+    def _export_enhanced_results(
+        self, 
+        results: Dict[str, Any], 
+        context: PipelineContext, 
+        output_formats: List[str] = None,
+        processing_start_time: float = None
+    ) -> Dict[str, Path]:
+        """Export results using enhanced output system."""
+        try:
+            # Initialize output manager
+            output_manager = OutputFormatManager(self.config, self.config.output.output_dir)
+            
+            # Determine formats to export
+            if not output_formats:
+                output_formats = self.config.output.default_formats
+            
+            # Create media info
+            audio_info = context.audio_info or {}
+            video_metadata = getattr(context, 'video_metadata', {}) or {}
+            
+            # Determine source type
+            source_type = "video" if video_metadata else "audio"
+            if context.input_source and ("youtube.com" in str(context.input_source) or "youtu.be" in str(context.input_source)):
+                source_type = "youtube"
+            
+            media_info = MediaInfo(
+                source_type=source_type,
+                duration=audio_info.get('duration', 0),
+                sample_rate=audio_info.get('sample_rate', 0),
+                channels=audio_info.get('channels', 0),
+                language=results.get('language', 'auto'),
+                video_resolution=video_metadata.get('resolution'),
+                codec=video_metadata.get('video_codec') or audio_info.get('codec'),
+                file_size=video_metadata.get('size') or audio_info.get('file_size_bytes', 0)
+            )
+            
+            # Create processing metadata
+            processing_time = 0
+            if processing_start_time:
+                processing_time = time.time() - processing_start_time
+            
+            metadata = ProcessingMetadata(
+                timestamp=datetime.now().isoformat(),
+                processing_time=processing_time,
+                pipeline_version="2.0",
+                whisper_enhancements=getattr(context, 'whisper_performance_stats', {}),
+                performance_stats=context.get_performance_stats()
+            )
+            
+            # Export in multiple formats
+            exported_files = output_manager.export_results(
+                results=results,
+                media_info=media_info,
+                metadata=metadata,
+                formats=output_formats
+            )
+            
+            # Display export summary
+            click.echo(click.style("📤 Export Summary:", fg='cyan'))
+            for format_type, file_path in exported_files.items():
+                click.echo(f"  • {format_type.value}: {file_path}")
+            
+            # Convert enum keys to strings for return
+            return {fmt.value: path for fmt, path in exported_files.items()}
+            
+        except Exception as e:
+            self.logger.error(f"Enhanced export failed: {e}")
+            # Fallback to legacy export
+            return self._export_results_legacy(results, context)
+    
+    def _export_results_legacy(self, results: Dict[str, Any], context: PipelineContext) -> Dict[str, Path]:
         """Export results to files."""
         click.echo(f"\n{click.style('💾 Saving Results', fg='yellow', bold=True)}")
         

@@ -41,6 +41,14 @@ class CLIManager:
         if options.get('use_enhanced_format'):
             builder = builder.use_enhanced_format()
         
+        # Set output formats
+        if options.get('output_formats'):
+            builder = builder.with_output_formats(options['output_formats'])
+        
+        # Set video processing method if specified
+        if hasattr(config.video, 'extraction_method'):
+            builder = builder.with_video_method(config.video.extraction_method)
+        
         self.pipeline = builder.build()
     
     def execute_pipeline(self, input_source: str, debug: bool = False) -> dict:
@@ -76,9 +84,10 @@ class CLIManager:
 )
 @click.option(
     '--format', '-f',
-    type=click.Choice(['json', 'csv', 'both']),
-    default='json',
-    help='Output format for results'
+    multiple=True,
+    type=click.Choice(['json', 'ass', 'vtt', 'srt', 'backend_api', 'frontend_json']),
+    default=['json'],
+    help='Output formats for results (can specify multiple)'
 )
 @click.option(
     '--gpu/--no-gpu',
@@ -153,6 +162,24 @@ class CLIManager:
     help='Use enhanced output format with linguistic precision and standard compliance'
 )
 @click.option(
+    '--video-method',
+    type=click.Choice(['auto', 'moviepy', 'ffmpeg', 'parallel']),
+    default='auto',
+    help='Method for video processing (auto selects best)'
+)
+@click.option(
+    '--enable-backend-api',
+    is_flag=True,
+    default=False,
+    help='Generate backend API compatible output'
+)
+@click.option(
+    '--enable-frontend-json',
+    is_flag=True,
+    default=False,
+    help='Generate frontend-optimized JSON output'
+)
+@click.option(
     '--verbose', '-v',
     is_flag=True,
     help='Enable verbose output'
@@ -165,7 +192,7 @@ class CLIManager:
 def main(
     input_source: str,
     output: str,
-    format: str,
+    format: tuple,
     gpu: bool,
     config: Optional[str],
     sample_rate: int,
@@ -179,6 +206,9 @@ def main(
     export_ass: bool,
     require_all: bool,
     use_enhanced_format: bool,
+    video_method: str,
+    enable_backend_api: bool,
+    enable_frontend_json: bool,
     verbose: bool,
     debug: bool
 ):
@@ -233,7 +263,10 @@ def main(
             export_features=export_features,
             visualize=visualize,
             verbose=verbose,
-            require_all=require_all
+            require_all=require_all,
+            video_method=video_method,
+            enable_backend_api=enable_backend_api,
+            enable_frontend_json=enable_frontend_json
         )
         
         # Validate configuration
@@ -247,7 +280,8 @@ def main(
             'enable_stt': enable_stt,
             'stt_language': stt_language,
             'export_ass': export_ass,
-            'use_enhanced_format': use_enhanced_format
+            'use_enhanced_format': use_enhanced_format,
+            'output_formats': list(format)
         }
         
         cli_manager.create_pipeline(pipeline_config, **pipeline_options)
@@ -292,12 +326,26 @@ def _override_config_with_cli_params(config: Config, **params) -> None:
     config.model.use_gpu = params['gpu']
     config.model.emotion_threshold = params['emotion_threshold']
     
+    # Video settings
+    config.video.extraction_method = params['video_method']
+    
     # Output settings
     config.output.output_dir = Path(params['output'])
-    format_param = params['format']
-    config.output.output_format = [format_param] if format_param != 'both' else ['json', 'csv']
+    format_params = params['format']
+    
+    # Handle new format system
+    if format_params:
+        config.output.default_formats = list(format_params)
+        # Add API formats if requested
+        if params.get('enable_backend_api'):
+            config.output.default_formats.append('backend_api')
+        if params.get('enable_frontend_json'):
+            config.output.default_formats.append('frontend_json')
+    
     config.output.include_raw_features = params['export_features']
     config.output.generate_visualizations = params['visualize']
+    config.output.enable_backend_api = params.get('enable_backend_api', False)
+    config.output.enable_frontend_json = params.get('enable_frontend_json', False)
     
     # Processing settings
     config.processing.verbose = params['verbose']
@@ -321,12 +369,17 @@ def version():
 def formats():
     """Show supported formats."""
     from src.audio_extractor import AudioExtractor
+    from src.output_manager import OutputFormatManager
     
     extractor = AudioExtractor()
     formats = extractor.get_supported_formats()
     
-    click.echo(click.style("🎵 Supported Formats", fg='cyan', bold=True))
-    click.echo(click.style("=" * 40, fg='cyan'))
+    # Get output formats from OutputFormatManager
+    output_manager = OutputFormatManager(Config(), Path('./output'))
+    output_formats = output_manager.get_supported_formats()
+    
+    click.echo(click.style("🎵 Enhanced Video Processing Pipeline", fg='cyan', bold=True))
+    click.echo(click.style("=" * 50, fg='cyan'))
     
     click.echo("\n📥 Input Audio Formats:")
     for fmt in formats['input_audio']:
@@ -337,12 +390,33 @@ def formats():
         click.echo(f"  • {fmt}")
     
     click.echo("\n📤 Output Formats:")
-    for fmt in formats['output']:
-        click.echo(f"  • {fmt}")
+    for fmt in output_formats:
+        description = {
+            'json': 'Enhanced JSON with metadata',
+            'ass': 'ASS subtitles with emotion styling',
+            'vtt': 'WebVTT subtitles',
+            'srt': 'SRT subtitles',
+            'backend_api': 'Backend API compatible JSON',
+            'frontend_json': 'Frontend optimized JSON with visualization data'
+        }.get(fmt, 'Standard format')
+        click.echo(f"  • {fmt}: {description}")
     
     click.echo("\n🌐 Supported Sources:")
     for src in formats['sources']:
         click.echo(f"  • {src}")
+    
+    click.echo("\n🎬 Video Processing Methods:")
+    click.echo("  • auto: Automatically select best method")
+    click.echo("  • moviepy: MoviePy-based extraction")
+    click.echo("  • ffmpeg: FFmpeg-based extraction")
+    click.echo("  • parallel: Try multiple methods simultaneously")
+    
+    click.echo("\n✨ Enhanced Features:")
+    click.echo("  • YouTube embed URL support")
+    click.echo("  • Video metadata extraction")
+    click.echo("  • Parallel processing optimization")
+    click.echo("  • Multiple output format generation")
+    click.echo("  • Backend/frontend API compatibility")
 
 
 @cli.command()
@@ -375,16 +449,29 @@ def pipeline_info():
     click.echo("  • Configurable via YAML files or environment")
     click.echo("  • Enhanced format with linguistic precision")
     click.echo("  • Comprehensive performance logging")
+    click.echo("  • Advanced video processing with multiple extraction methods")
+    click.echo("  • Multiple output formats (JSON, ASS, VTT, SRT, API formats)")
+    click.echo("  • YouTube embed URL support")
+    click.echo("  • Backend/frontend API compatibility")
     
     click.echo(f"\n📚 Usage Examples:")
-    click.echo("  # Basic usage")
+    click.echo("  # Basic audio processing")
     click.echo("  python main.py audio.wav")
     click.echo("")
-    click.echo("  # With enhanced format")
-    click.echo("  python main.py audio.wav --use-enhanced-format")
+    click.echo("  # Video processing with multiple formats")
+    click.echo("  python main.py video.mp4 --format json ass vtt")
     click.echo("")
-    click.echo("  # With speech recognition")
-    click.echo("  python main.py audio.wav --enable-stt --stt-language ko")
+    click.echo("  # YouTube video with enhanced format")
+    click.echo("  python main.py 'https://youtube.com/watch?v=xyz' --use-enhanced-format")
+    click.echo("")
+    click.echo("  # YouTube embed URL support")
+    click.echo("  python main.py 'https://youtube.com/embed/xyz' --format json backend_api")
+    click.echo("")
+    click.echo("  # With speech recognition and video method selection")
+    click.echo("  python main.py video.mp4 --enable-stt --video-method parallel")
+    click.echo("")
+    click.echo("  # Backend/frontend API output")
+    click.echo("  python main.py audio.wav --enable-backend-api --enable-frontend-json")
 
 
 if __name__ == '__main__':

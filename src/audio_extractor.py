@@ -209,19 +209,19 @@ class AudioExtractor:
         self,
         video_path: Union[str, Path],
         output_path: Optional[Path] = None,
-        method: str = "moviepy",
+        method: str = "auto",
         **kwargs
-    ) -> Path:
-        """Extract audio from video file.
+    ) -> Tuple[Path, Dict[str, Any]]:
+        """Extract audio from video file with optimization and metadata.
         
         Args:
             video_path: Path to video file
             output_path: Optional output path
-            method: Extraction method ("moviepy" or "ffmpeg")
+            method: Extraction method ("auto", "moviepy", "ffmpeg", "parallel")
             **kwargs: Additional parameters
             
         Returns:
-            Path to extracted audio
+            Tuple of (audio_path, video_metadata)
             
         Raises:
             IOError: If extraction fails
@@ -231,12 +231,36 @@ class AudioExtractor:
         if not video_path.exists():
             raise IOError(f"Video file not found: {video_path}")
         
-        if method == "moviepy":
-            return self._extract_with_moviepy(video_path, output_path, **kwargs)
-        elif method == "ffmpeg":
-            return self._extract_with_ffmpeg(video_path, output_path, **kwargs)
-        else:
-            raise ValueError(f"Unknown extraction method: {method}")
+        perf_logger.start_timer("video_extraction")
+        
+        try:
+            # Get video metadata first
+            video_metadata = self._get_video_metadata(video_path)
+            logger.info(f"Video metadata: {video_metadata['duration']:.2f}s, {video_metadata.get('resolution', 'unknown')}")
+            
+            # Choose optimal extraction method
+            if method == "auto":
+                method = self._choose_optimal_method(video_metadata)
+                logger.info(f"Auto-selected extraction method: {method}")
+            
+            if method == "parallel":
+                audio_path = self._extract_with_parallel_methods(video_path, output_path, **kwargs)
+            elif method == "moviepy":
+                audio_path = self._extract_with_moviepy(video_path, output_path, **kwargs)
+            elif method == "ffmpeg":
+                audio_path = self._extract_with_ffmpeg(video_path, output_path, **kwargs)
+            else:
+                raise ValueError(f"Unknown extraction method: {method}")
+            
+            duration = perf_logger.stop_timer("video_extraction")
+            logger.info(f"Video extraction completed in {duration:.2f}s")
+            
+            return audio_path, video_metadata
+            
+        except Exception as e:
+            perf_logger.stop_timer("video_extraction")
+            logger.error(f"Video extraction failed: {e}")
+            raise
     
     def _extract_from_url(self, url: str, **kwargs) -> Path:
         """Extract audio from URL.
@@ -275,7 +299,8 @@ class AudioExtractor:
         Returns:
             Path to extracted audio
         """
-        return self.extract_from_video(video_path, **kwargs)
+        audio_path, _ = self.extract_from_video(video_path, **kwargs)
+        return audio_path
     
     def _process_audio_file(self, audio_path: Path, **kwargs) -> Path:
         """Process existing audio file.
@@ -496,6 +521,8 @@ class AudioExtractor:
         youtube_patterns = [
             r'(https?://)?(www\.)?(youtube\.com|youtu\.be)',
             r'(https?://)?(www\.)?(m\.youtube\.com)',
+            r'(https?://)?(www\.)?youtube\.com/embed',  # YouTube embed URLs
+            r'(https?://)?(www\.)?youtube-nocookie\.com/embed',  # Privacy-enhanced embed
         ]
         
         return any(re.search(pattern, url) for pattern in youtube_patterns)
@@ -514,6 +541,12 @@ class AudioExtractor:
             parts = url.split('/')
             if parts:
                 return parts[-1].split('?')[0]
+        
+        # Handle embed format (youtube.com/embed/VIDEO_ID)
+        if '/embed/' in url:
+            embed_match = re.search(r'/embed/([a-zA-Z0-9_-]+)', url)
+            if embed_match:
+                return embed_match.group(1)
         
         # Handle youtube.com format
         parsed = urlparse(url)
@@ -544,6 +577,168 @@ class AudioExtractor:
         except:
             return False
     
+    def _get_video_metadata(self, video_path: Path) -> Dict[str, Any]:
+        """Get video metadata using FFmpeg probe.
+        
+        Args:
+            video_path: Path to video file
+            
+        Returns:
+            Video metadata dictionary
+        """
+        try:
+            # Use ffmpeg.probe to get metadata
+            probe = ffmpeg.probe(str(video_path))
+            
+            video_stream = next(
+                (stream for stream in probe['streams'] if stream['codec_type'] == 'video'),
+                None
+            )
+            audio_stream = next(
+                (stream for stream in probe['streams'] if stream['codec_type'] == 'audio'),
+                None
+            )
+            
+            metadata = {
+                'duration': float(probe['format'].get('duration', 0)),
+                'size': int(probe['format'].get('size', 0)),
+                'format': probe['format'].get('format_name', ''),
+                'has_audio': audio_stream is not None,
+                'has_video': video_stream is not None
+            }
+            
+            if video_stream:
+                metadata.update({
+                    'resolution': f"{video_stream.get('width', 0)}x{video_stream.get('height', 0)}",
+                    'video_codec': video_stream.get('codec_name', ''),
+                    'fps': self._parse_fps(video_stream.get('r_frame_rate', ''))
+                })
+            
+            if audio_stream:
+                metadata.update({
+                    'audio_codec': audio_stream.get('codec_name', ''),
+                    'sample_rate': int(audio_stream.get('sample_rate', 0)),
+                    'channels': int(audio_stream.get('channels', 0))
+                })
+            
+            return metadata
+            
+        except Exception as e:
+            logger.warning(f"Failed to get video metadata: {e}")
+            return {
+                'duration': 0,
+                'size': 0,
+                'format': 'unknown',
+                'has_audio': True,
+                'has_video': True
+            }
+    
+    def _parse_fps(self, fps_str: str) -> float:
+        """Parse FPS from FFmpeg r_frame_rate format."""
+        try:
+            if '/' in fps_str:
+                num, den = fps_str.split('/')
+                return float(num) / float(den)
+            return float(fps_str)
+        except:
+            return 0.0
+    
+    def _choose_optimal_method(self, metadata: Dict[str, Any]) -> str:
+        """Choose optimal extraction method based on video metadata.
+        
+        Args:
+            metadata: Video metadata
+            
+        Returns:
+            Optimal extraction method
+        """
+        duration = metadata.get('duration', 0)
+        size = metadata.get('size', 0)
+        format_name = metadata.get('format', '').lower()
+        
+        # Use FFmpeg for large files or specific formats
+        if size > 500 * 1024 * 1024 or duration > 3600:  # > 500MB or > 1 hour
+            return "ffmpeg"
+        
+        # Use FFmpeg for problematic formats
+        if any(fmt in format_name for fmt in ['webm', 'mkv', 'flv']):
+            return "ffmpeg"
+        
+        # Use MoviePy for smaller files (better error handling)
+        if VideoFileClip is not None:
+            return "moviepy"
+        
+        # Fallback to FFmpeg
+        return "ffmpeg"
+    
+    def _extract_with_parallel_methods(
+        self,
+        video_path: Path,
+        output_path: Optional[Path] = None,
+        **kwargs
+    ) -> Path:
+        """Try multiple extraction methods in parallel and use the fastest.
+        
+        Args:
+            video_path: Path to video file
+            output_path: Optional output path
+            **kwargs: Additional parameters
+            
+        Returns:
+            Path to extracted audio
+        """
+        import concurrent.futures
+        import tempfile
+        
+        # Create temporary paths for each method
+        temp_paths = {
+            'moviepy': self.temp_dir / f"parallel_moviepy_{video_path.stem}.wav",
+            'ffmpeg': self.temp_dir / f"parallel_ffmpeg_{video_path.stem}.wav"
+        }
+        
+        methods = {}
+        if VideoFileClip is not None:
+            methods['moviepy'] = lambda: self._extract_with_moviepy(video_path, temp_paths['moviepy'], **kwargs)
+        methods['ffmpeg'] = lambda: self._extract_with_ffmpeg(video_path, temp_paths['ffmpeg'], **kwargs)
+        
+        # Run methods in parallel
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            futures = {
+                executor.submit(method): name 
+                for name, method in methods.items()
+            }
+            
+            # Get the first successful result
+            for future in concurrent.futures.as_completed(futures):
+                method_name = futures[future]
+                try:
+                    result_path = future.result()
+                    logger.info(f"Parallel extraction: {method_name} completed first")
+                    
+                    # Clean up other temp files
+                    for name, temp_path in temp_paths.items():
+                        if name != method_name and temp_path.exists():
+                            try:
+                                temp_path.unlink()
+                            except:
+                                pass
+                    
+                    # Move to final output path if specified
+                    if output_path:
+                        output_path = Path(output_path)
+                        output_path.parent.mkdir(parents=True, exist_ok=True)
+                        result_path.rename(output_path)
+                        return output_path
+                    
+                    return result_path
+                    
+                except Exception as e:
+                    logger.warning(f"Parallel extraction method {method_name} failed: {e}")
+                    continue
+        
+        # If all methods failed
+        raise IOError("All parallel extraction methods failed")
+
     def cleanup_temp_files(self) -> None:
         """Clean up temporary files."""
         try:

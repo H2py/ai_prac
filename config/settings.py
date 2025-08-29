@@ -80,6 +80,34 @@ class WhisperConfig:
 
 
 @dataclass
+class VideoConfig:
+    """Video processing configuration."""
+    
+    # Extraction methods
+    extraction_method: str = "auto"  # "auto" | "moviepy" | "ffmpeg" | "parallel"
+    enable_parallel_extraction: bool = True
+    
+    # Performance optimization
+    auto_method_selection: bool = True
+    large_file_threshold_mb: int = 500  # Use FFmpeg for files larger than this
+    long_duration_threshold_s: int = 3600  # Use FFmpeg for videos longer than this
+    
+    # Video metadata
+    extract_video_metadata: bool = True
+    preserve_video_info: bool = True
+    
+    # Memory and processing
+    enable_streaming: bool = True  # Stream processing for large videos
+    max_resolution: Optional[str] = None  # e.g., "1920x1080" to downscale
+    
+    # Format support
+    supported_formats: List[str] = field(default_factory=lambda: [
+        '.mp4', '.avi', '.mov', '.mkv', '.flv',
+        '.wmv', '.webm', '.m4v', '.mpg', '.mpeg'
+    ])
+
+
+@dataclass
 class ProcessingConfig:
     """Processing pipeline configuration."""
     
@@ -104,16 +132,40 @@ class ProcessingConfig:
 
 @dataclass
 class OutputConfig:
-    """Output configuration."""
+    """Enhanced output configuration."""
     
     output_dir: Path = Path("./output")
-    output_format: List[str] = field(default_factory=lambda: ["json"])  # json, csv, both
+    
+    # Format selection
+    default_formats: List[str] = field(default_factory=lambda: ["json"])
+    enable_multiple_formats: bool = True
     
     # File naming
     timestamp_format: str = "%Y%m%d_%H%M%S"
     include_timestamp: bool = True
     
-    # Result content
+    # Format-specific settings
+    json_pretty_print: bool = True
+    json_ensure_ascii: bool = False
+    
+    # Subtitle formats
+    ass_font_name: str = "Arial"
+    ass_font_size: int = 48
+    vtt_include_speaker: bool = True
+    srt_include_speaker: bool = True
+    
+    # Backend/Frontend communication
+    enable_backend_api: bool = False
+    enable_frontend_json: bool = False
+    api_base_url: Optional[str] = None
+    
+    # File organization
+    organize_by_date: bool = True
+    create_subdirs: bool = False
+    cleanup_temp_files: bool = True
+    
+    # Legacy settings (for backward compatibility)
+    output_format: List[str] = field(default_factory=lambda: ["json"])  # json, csv, both
     include_raw_features: bool = False
     include_confidence_scores: bool = True
     include_acoustic_features: bool = True
@@ -123,7 +175,6 @@ class OutputConfig:
     visualization_format: str = "png"
     
     # Export options
-    pretty_print_json: bool = True
     csv_delimiter: str = ","
     csv_include_header: bool = True
     export_ass: bool = False  # Export ASS subtitle files
@@ -151,6 +202,7 @@ class Config:
     audio: AudioConfig = field(default_factory=AudioConfig)
     model: ModelConfig = field(default_factory=ModelConfig)
     whisper: WhisperConfig = field(default_factory=WhisperConfig)
+    video: VideoConfig = field(default_factory=VideoConfig)
     processing: ProcessingConfig = field(default_factory=ProcessingConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
@@ -185,6 +237,10 @@ class Config:
                 whisper_data['language_cache_dir'] = Path(whisper_data['language_cache_dir'])
             config.whisper = WhisperConfig(**whisper_data)
         
+        # Update video config
+        if 'video' in data:
+            config.video = VideoConfig(**data['video'])
+        
         # Update processing config
         if 'processing' in data:
             config.processing = ProcessingConfig(**data['processing'])
@@ -216,6 +272,7 @@ class Config:
             'model': self.model.__dict__,
             'whisper': {k: str(v) if isinstance(v, Path) else v 
                        for k, v in self.whisper.__dict__.items()},
+            'video': self.video.__dict__,
             'processing': self.processing.__dict__,
             'output': {k: str(v) if isinstance(v, Path) else v 
                       for k, v in self.output.__dict__.items()},
