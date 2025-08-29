@@ -392,7 +392,10 @@ def main(
             click.echo("\n" + click.style("🎤 Step 5: Speech Recognition", fg='yellow', bold=True))
             
             try:
-                recognizer = SpeechRecognizer(model_name="base")
+                recognizer = SpeechRecognizer(
+                    model_name="base",
+                    whisper_config=pipeline_config.whisper
+                )
                 recognizer.initialize()
                 
                 # Use speaker segments if available

@@ -4,7 +4,7 @@ Configuration settings for the audio analysis pipeline.
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, List
 import yaml
 import os
 
@@ -48,6 +48,35 @@ class ModelConfig:
     
     # Model cache
     cache_dir: Optional[Path] = None
+
+
+@dataclass
+class WhisperConfig:
+    """Performance-optimized Whisper configuration."""
+    
+    # Enhanced language detection
+    max_language_samples: int = 3  # Reduced from 5 for speed
+    language_confidence_threshold: float = 0.9  # Early exit threshold
+    enable_language_caching: bool = True
+    language_cache_dir: Optional[Path] = None
+    
+    # Voice Activity Detection
+    enable_vad: bool = True
+    vad_mode: str = "fast"  # "fast" | "balanced" | "accurate"
+    vad_chunk_size: float = 1.0  # Process in 1s chunks
+    min_speech_duration: float = 0.5  # Skip very short segments
+    vad_threshold: float = 0.5  # Voice activity threshold
+    
+    # Textual anomaly detection
+    enable_anomaly_detection: bool = True
+    anomaly_check_sample_size: float = 0.1  # Check first 10% only
+    anomaly_repetition_threshold: float = 0.8  # Threshold for repetitive patterns
+    max_retry_attempts: int = 2
+    retry_shift_duration: float = 0.5  # Small shifts for retries
+    
+    # Performance settings
+    enable_performance_monitoring: bool = True
+    max_processing_time_factor: float = 3.0  # Max processing time as factor of audio duration
 
 
 @dataclass
@@ -121,6 +150,7 @@ class Config:
     
     audio: AudioConfig = field(default_factory=AudioConfig)
     model: ModelConfig = field(default_factory=ModelConfig)
+    whisper: WhisperConfig = field(default_factory=WhisperConfig)
     processing: ProcessingConfig = field(default_factory=ProcessingConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
@@ -147,6 +177,13 @@ class Config:
         # Update model config
         if 'model' in data:
             config.model = ModelConfig(**data['model'])
+        
+        # Update whisper config
+        if 'whisper' in data:
+            whisper_data = data['whisper'].copy()
+            if 'language_cache_dir' in whisper_data and whisper_data['language_cache_dir']:
+                whisper_data['language_cache_dir'] = Path(whisper_data['language_cache_dir'])
+            config.whisper = WhisperConfig(**whisper_data)
         
         # Update processing config
         if 'processing' in data:
@@ -177,6 +214,8 @@ class Config:
         data = {
             'audio': self.audio.__dict__,
             'model': self.model.__dict__,
+            'whisper': {k: str(v) if isinstance(v, Path) else v 
+                       for k, v in self.whisper.__dict__.items()},
             'processing': self.processing.__dict__,
             'output': {k: str(v) if isinstance(v, Path) else v 
                       for k, v in self.output.__dict__.items()},
