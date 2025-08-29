@@ -253,7 +253,10 @@ class SpeechRecognitionStep(PipelineStep):
         start_time = time.time()
         
         try:
-            recognizer = SpeechRecognizer(model_name="base")
+            recognizer = SpeechRecognizer(
+                model_name="base",
+                whisper_config=self.config.whisper
+            )
             recognizer.initialize()
             
             # Use speaker segments if available
@@ -289,6 +292,22 @@ class SpeechRecognitionStep(PipelineStep):
                     click.echo(f"  • Sample: \"{sample_dict.get('text', '')[:50]}...\"")
             else:
                 click.echo(click.style("⚠️  No transcriptions generated", fg='yellow'))
+            
+            # Display performance stats if enabled
+            if hasattr(recognizer, 'get_performance_stats'):
+                perf_stats = recognizer.get_performance_stats()
+                if perf_stats and self.config.whisper.enable_performance_monitoring:
+                    click.echo(f"  📊 Whisper enhancements:")
+                    if perf_stats.get('enhanced_language_detection', {}).get('enabled'):
+                        lang_stats = perf_stats['enhanced_language_detection']
+                        click.echo(f"    • Enhanced language detection: {lang_stats['max_samples']} samples")
+                        if lang_stats.get('cached_languages', 0) > 0:
+                            click.echo(f"    • Language cache: {lang_stats['cached_languages']} entries")
+                    if perf_stats.get('vad', {}).get('vad_enabled'):
+                        vad_stats = perf_stats['vad']
+                        click.echo(f"    • Voice Activity Detection: {vad_stats.get('vad_mode', 'unknown')} mode")
+                    if perf_stats.get('anomaly_detection', {}).get('enabled'):
+                        click.echo(f"    • Textual anomaly detection: enabled")
             
             duration = time.time() - start_time
             context.mark_step_completed(self.name, duration)

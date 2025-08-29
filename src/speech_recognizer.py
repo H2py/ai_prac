@@ -1,15 +1,22 @@
 """
 Speech recognition module using OpenAI Whisper for transcription.
+Enhanced with performance-optimized language detection, VAD preprocessing, and anomaly handling.
 """
 
 import logging
+import hashlib
+import json
+import random
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Union, Tuple
 import numpy as np
 from dataclasses import dataclass
+from collections import defaultdict
 
 from src.utils.audio_utils import load_audio, split_audio_chunks
 from src.utils.logger import PerformanceLogger, ProgressLogger
+from src.vad_processor import VADProcessor, SpeechSegment
+from config.settings import WhisperConfig
 
 logger = logging.getLogger(__name__)
 perf_logger = PerformanceLogger(logger)
@@ -38,19 +45,78 @@ class TranscriptionSegment:
 
 
 class SpeechRecognizer:
-    """Speech recognition using Whisper."""
+    """Enhanced speech recognition using Whisper with performance optimizations."""
     
-    def __init__(self, model_name: str = "base", device: Optional[str] = None):
+    def __init__(
+        self, 
+        model_name: str = "base", 
+        device: Optional[str] = None,
+        whisper_config: Optional[WhisperConfig] = None
+    ):
         """Initialize speech recognizer.
         
         Args:
             model_name: Whisper model size (tiny, base, small, medium, large)
             device: Device to use (cpu, cuda, or None for auto)
+            whisper_config: Configuration for performance optimizations
         """
         self.model_name = model_name
         self.device = device
         self.model = None
         self.processor = None
+        
+        # Enhanced features
+        self.config = whisper_config or WhisperConfig()
+        self.vad_processor = VADProcessor(self.config) if self.config.enable_vad else None
+        self._language_cache = {}
+        self._setup_cache_directory()
+    
+    def _setup_cache_directory(self):
+        """Setup language detection cache directory."""
+        if not self.config.enable_language_caching:
+            return
+            
+        cache_dir = self.config.language_cache_dir or Path.home() / ".cache" / "whisper_lang_detection"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_file = cache_dir / "language_cache.json"
+        
+        # Load existing cache
+        if self.cache_file.exists():
+            try:
+                with open(self.cache_file, 'r') as f:
+                    self._language_cache = json.load(f)
+                logger.debug(f"Loaded {len(self._language_cache)} cached language detections")
+            except Exception as e:
+                logger.warning(f"Could not load language cache: {e}")
+                self._language_cache = {}
+    
+    def _save_language_cache(self):
+        """Save language detection cache to disk."""
+        if not self.config.enable_language_caching or not hasattr(self, 'cache_file'):
+            return
+            
+        try:
+            with open(self.cache_file, 'w') as f:
+                json.dump(self._language_cache, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Could not save language cache: {e}")
+    
+    def _get_audio_hash(self, audio_path: Path) -> str:
+        """Get hash of audio file for caching.
+        
+        Args:
+            audio_path: Path to audio file
+            
+        Returns:
+            Hash string
+        """
+        try:
+            # Use file size and modification time for quick hash
+            stat = audio_path.stat()
+            hash_input = f"{audio_path.name}_{stat.st_size}_{stat.st_mtime}".encode()
+            return hashlib.md5(hash_input).hexdigest()[:16]
+        except Exception:
+            return str(audio_path)
         
     def initialize(self):
         """Initialize the Whisper model."""
@@ -69,6 +135,10 @@ class SpeechRecognizer:
             
             logger.info(f"Whisper model loaded successfully")
             
+            # Initialize VAD processor if enabled
+            if self.vad_processor:
+                self.vad_processor.initialize()
+                
         except ImportError:
             logger.warning("Whisper not installed. Using fallback mode.")
             logger.info("Install with: pip install openai-whisper")
@@ -110,6 +180,22 @@ class SpeechRecognizer:
             
             # Load audio
             audio_data, sample_rate = load_audio(audio_path, sample_rate=16000)
+            
+            # Use VAD preprocessing if enabled and no segments provided
+            if not segments and self.vad_processor and self.config.enable_vad:
+                speech_segments = self.vad_processor.detect_speech_segments(audio_path)
+                if speech_segments:
+                    # Convert VAD segments to transcription format
+                    segments = [
+                        {
+                            'start': seg.start,
+                            'end': seg.end,
+                            'speaker': f'speaker_vad_{i+1}'
+                        }
+                        for i, seg in enumerate(speech_segments)
+                    ]
+                    if verbose:
+                        logger.info(f"VAD found {len(segments)} speech segments")
             
             transcriptions = []
             
@@ -229,6 +315,12 @@ class SpeechRecognizer:
                 )
                 transcriptions.append(trans)
             
+            # Apply anomaly detection and retry if needed
+            if self.config.enable_anomaly_detection:
+                transcriptions = self._handle_textual_anomalies(
+                    transcriptions, audio, sample_rate, language, task, verbose
+                )
+            
             return transcriptions
             
         except Exception as e:
@@ -283,7 +375,7 @@ class SpeechRecognizer:
         return transcriptions
     
     def detect_language(self, audio_path: Union[str, Path]) -> Optional[str]:
-        """Detect language of audio.
+        """Enhanced language detection with multiple samples and caching.
         
         Args:
             audio_path: Path to audio file
@@ -294,27 +386,393 @@ class SpeechRecognizer:
         if self.model is None:
             return None
         
+        audio_path = Path(audio_path)
+        
+        # Check cache first
+        if self.config.enable_language_caching:
+            audio_hash = self._get_audio_hash(audio_path)
+            if audio_hash in self._language_cache:
+                cached_result = self._language_cache[audio_hash]
+                logger.debug(f"Using cached language detection: {cached_result['language']}")
+                return cached_result['language']
+        
+        perf_logger.start_timer("enhanced_language_detection")
+        
         try:
             import whisper
             
-            audio_path = Path(audio_path)
+            logger.info(f"Enhanced language detection for: {audio_path}")
             
-            # Load audio (30 seconds for detection)
-            audio, sr = load_audio(audio_path, sample_rate=16000, duration=30)
+            # Load full audio to determine sampling strategy
+            audio_data, sr = load_audio(audio_path, sample_rate=16000)
+            duration = len(audio_data) / sr
             
-            # Detect language
-            audio = whisper.pad_or_trim(audio)
-            mel = whisper.log_mel_spectrogram(audio).to(self.model.device)
+            # Adaptive sampling based on duration
+            if duration <= 30:
+                # Short audio: single sample (optimization)
+                num_samples = 1
+                logger.debug("Short audio: using single sample")
+            elif duration <= 120:
+                # Medium audio: reduced samples
+                num_samples = min(self.config.max_language_samples, 2)
+            else:
+                # Long audio: full sampling
+                num_samples = self.config.max_language_samples
             
-            _, probs = self.model.detect_language(mel)
-            language = max(probs, key=probs.get)
+            probabilities_map = defaultdict(list)
             
-            logger.info(f"Detected language: {language} (confidence: {probs[language]:.2f})")
+            for i in range(num_samples):
+                # Strategic sampling: beginning, middle, end + random
+                if num_samples == 1:
+                    fragment_audio = self._extract_language_sample(audio_data, sr, 0, duration)
+                else:
+                    if i == 0:
+                        # Beginning
+                        start_time = 0
+                    elif i == 1 and num_samples > 2:
+                        # Middle
+                        start_time = duration / 2
+                    elif i == num_samples - 1:
+                        # End
+                        start_time = max(0, duration - 30)
+                    else:
+                        # Random position
+                        start_time = random.uniform(0, max(0, duration - 30))
+                    
+                    fragment_audio = self._extract_language_sample(audio_data, sr, start_time, duration)
+                
+                if len(fragment_audio) > 0:
+                    # Detect language for this fragment
+                    probs = self._detect_language_fragment(fragment_audio)
+                    
+                    if probs:
+                        for lang_key in probs:
+                            probabilities_map[lang_key].append(probs[lang_key])
+                        
+                        # Early exit optimization: if confidence is very high, stop sampling
+                        max_prob = max(probs.values())
+                        if max_prob >= self.config.language_confidence_threshold and i >= 1:
+                            logger.debug(f"Early exit: high confidence {max_prob:.2f}")
+                            break
             
-            return language
+            if not probabilities_map:
+                logger.warning("No language probabilities detected")
+                return None
+            
+            # Calculate average probabilities
+            avg_probabilities = {}
+            for lang_key in probabilities_map:
+                avg_probabilities[lang_key] = sum(probabilities_map[lang_key]) / len(probabilities_map[lang_key])
+            
+            # Get most confident language
+            detected_lang = max(avg_probabilities, key=avg_probabilities.get)
+            confidence = avg_probabilities[detected_lang]
+            
+            duration_used = perf_logger.stop_timer("enhanced_language_detection")
+            
+            logger.info(f"Enhanced detection: {detected_lang} (confidence: {confidence:.2f}, "
+                       f"samples: {num_samples}, time: {duration_used:.2f}s)")
+            
+            # Cache result
+            if self.config.enable_language_caching and hasattr(self, 'cache_file'):
+                self._language_cache[audio_hash] = {
+                    'language': detected_lang,
+                    'confidence': confidence,
+                    'samples': num_samples
+                }
+                self._save_language_cache()
+            
+            return detected_lang
             
         except Exception as e:
-            logger.error(f"Language detection failed: {e}")
+            perf_logger.stop_timer("enhanced_language_detection")
+            logger.error(f"Enhanced language detection failed: {e}")
+            return None
+    
+    def _extract_language_sample(
+        self, 
+        audio_data: np.ndarray, 
+        sample_rate: int, 
+        start_time: float, 
+        total_duration: float
+    ) -> np.ndarray:
+        """Extract 30-second sample for language detection.
+        
+        Args:
+            audio_data: Full audio data
+            sample_rate: Sample rate
+            start_time: Start time for sample
+            total_duration: Total audio duration
+            
+        Returns:
+            Audio fragment for language detection
+        """
+        # Ensure we don't go beyond audio bounds
+        start_sample = int(start_time * sample_rate)
+        end_sample = int(min(start_time + 30, total_duration) * sample_rate)
+        end_sample = min(end_sample, len(audio_data))
+        
+        fragment = audio_data[start_sample:end_sample]
+        
+        # Pad or trim to 30 seconds as Whisper expects
+        import whisper
+        return whisper.pad_or_trim(fragment)
+    
+    def _detect_language_fragment(self, audio_fragment: np.ndarray) -> Optional[Dict[str, float]]:
+        """Detect language for a single audio fragment.
+        
+        Args:
+            audio_fragment: Audio fragment
+            
+        Returns:
+            Language probabilities dictionary
+        """
+        try:
+            import whisper
+            
+            # Create mel spectrogram
+            mel = whisper.log_mel_spectrogram(audio_fragment).to(self.model.device)
+            
+            # Detect language
+            _, probs = self.model.detect_language(mel)
+            
+            return dict(probs)
+            
+        except Exception as e:
+            logger.debug(f"Fragment language detection failed: {e}")
+            return None
+    
+    def _handle_textual_anomalies(
+        self,
+        transcriptions: List[TranscriptionSegment],
+        original_audio: np.ndarray,
+        sample_rate: int,
+        language: Optional[str],
+        task: str,
+        verbose: bool
+    ) -> List[TranscriptionSegment]:
+        """Handle textual anomalies with limited retries.
+        
+        Args:
+            transcriptions: Original transcriptions
+            original_audio: Original audio data
+            sample_rate: Sample rate
+            language: Language code
+            task: Transcription task
+            verbose: Verbose flag
+            
+        Returns:
+            Cleaned transcriptions
+        """
+        if not self.config.enable_anomaly_detection:
+            return transcriptions
+        
+        cleaned_transcriptions = []
+        
+        for trans in transcriptions:
+            if self._detect_textual_anomaly(trans.text):
+                logger.warning(f"Textual anomaly detected in segment {trans.start:.2f}-{trans.end:.2f}s: "
+                             f"{trans.text[:50]}...")
+                
+                # Attempt retry with shifted segments
+                retry_trans = self._retry_with_shifted_segments(
+                    original_audio, sample_rate, trans, language, task, verbose
+                )
+                
+                if retry_trans:
+                    cleaned_transcriptions.extend(retry_trans)
+                else:
+                    # If all retries fail, mark as anomaly but keep
+                    trans.text = f"[ANOMALY DETECTED] {trans.text}"
+                    cleaned_transcriptions.append(trans)
+            else:
+                cleaned_transcriptions.append(trans)
+        
+        return cleaned_transcriptions
+    
+    def _detect_textual_anomaly(self, text: str) -> bool:
+        """Detect textual anomalies using heuristic rules.
+        
+        Args:
+            text: Text to check
+            
+        Returns:
+            True if anomaly detected
+        """
+        if not text or len(text.strip()) < 3:
+            return False
+        
+        text = text.strip()
+        
+        # Check for repetitive character patterns
+        if self._has_repetitive_pattern(text):
+            return True
+        
+        # Check for excessive repeated words
+        if self._has_repeated_words(text):
+            return True
+        
+        # Check for non-linguistic patterns
+        if self._has_non_linguistic_pattern(text):
+            return True
+        
+        return False
+    
+    def _has_repetitive_pattern(self, text: str) -> bool:
+        """Check for repetitive character patterns."""
+        # Check for repeated characters (e.g., "AAAAA...")
+        char_counts = {}
+        for char in text:
+            if char.isalpha():
+                char_counts[char] = char_counts.get(char, 0) + 1
+        
+        total_chars = sum(char_counts.values())
+        if total_chars == 0:
+            return False
+        
+        # If any character makes up more than 80% of the text
+        max_char_ratio = max(char_counts.values()) / total_chars
+        return max_char_ratio > self.config.anomaly_repetition_threshold
+    
+    def _has_repeated_words(self, text: str) -> bool:
+        """Check for excessive repeated words."""
+        words = text.split()
+        if len(words) < 3:
+            return False
+        
+        # Check if more than 60% of words are the same
+        word_counts = {}
+        for word in words:
+            word_counts[word] = word_counts.get(word, 0) + 1
+        
+        max_word_count = max(word_counts.values())
+        return max_word_count / len(words) > 0.6
+    
+    def _has_non_linguistic_pattern(self, text: str) -> bool:
+        """Check for non-linguistic patterns."""
+        # Check for patterns like "♪♪♪" or "..."
+        special_chars = sum(1 for c in text if not c.isalnum() and not c.isspace())
+        if special_chars / len(text) > 0.5:
+            return True
+        
+        # Check for very long words (likely corrupted)
+        words = text.split()
+        for word in words:
+            if len(word) > 30:
+                return True
+        
+        return False
+    
+    def _retry_with_shifted_segments(
+        self,
+        audio: np.ndarray,
+        sample_rate: int,
+        original_segment: TranscriptionSegment,
+        language: Optional[str],
+        task: str,
+        verbose: bool
+    ) -> Optional[List[TranscriptionSegment]]:
+        """Retry transcription with shifted audio segments.
+        
+        Args:
+            audio: Original audio data
+            sample_rate: Sample rate
+            original_segment: Segment with anomaly
+            language: Language code
+            task: Transcription task
+            verbose: Verbose flag
+            
+        Returns:
+            Retried transcriptions or None if all fail
+        """
+        segment_start = original_segment.start
+        segment_end = original_segment.end
+        
+        for attempt in range(self.config.max_retry_attempts):
+            # Shift segment forward slightly
+            shift = self.config.retry_shift_duration * (attempt + 1)
+            new_start = segment_start + shift
+            new_end = segment_end + shift
+            
+            # Ensure we don't go beyond audio bounds
+            if new_end * sample_rate >= len(audio):
+                break
+            
+            try:
+                # Extract shifted segment
+                start_sample = int(new_start * sample_rate)
+                end_sample = int(new_end * sample_rate)
+                shifted_audio = audio[start_sample:end_sample]
+                
+                if len(shifted_audio) == 0:
+                    continue
+                
+                # Retry transcription
+                retry_result = self._transcribe_segment_simple(
+                    shifted_audio, sample_rate, language, task
+                )
+                
+                if retry_result and not self._detect_textual_anomaly(retry_result.text):
+                    logger.info(f"Anomaly resolved after {attempt + 1} retry attempts")
+                    # Adjust timing back to original segment
+                    retry_result.start = segment_start
+                    retry_result.end = segment_end
+                    return [retry_result]
+                
+            except Exception as e:
+                logger.debug(f"Retry attempt {attempt + 1} failed: {e}")
+                continue
+        
+        logger.warning("All retry attempts failed for anomaly segment")
+        return None
+    
+    def _transcribe_segment_simple(
+        self,
+        audio: np.ndarray,
+        sample_rate: int,
+        language: Optional[str],
+        task: str
+    ) -> Optional[TranscriptionSegment]:
+        """Simple transcription without anomaly handling (for retries).
+        
+        Args:
+            audio: Audio data
+            sample_rate: Sample rate
+            language: Language code
+            task: Task type
+            
+        Returns:
+            Transcription segment or None
+        """
+        try:
+            import whisper
+            
+            # Ensure audio is float32
+            if audio.dtype != np.float32:
+                audio = audio.astype(np.float32)
+            
+            # Transcribe without word timestamps for speed
+            result = self.model.transcribe(
+                audio,
+                language=language,
+                task=task,
+                verbose=False,
+                word_timestamps=False
+            )
+            
+            text = result.get('text', '').strip()
+            if not text:
+                return None
+            
+            return TranscriptionSegment(
+                start=0.0,
+                end=len(audio) / sample_rate,
+                text=text,
+                language=result.get('language', language)
+            )
+            
+        except Exception as e:
+            logger.debug(f"Simple transcription failed: {e}")
             return None
     
     def get_supported_languages(self) -> List[str]:
@@ -337,3 +795,40 @@ class SpeechRecognizer:
             'mg', 'as', 'tt', 'haw', 'ln', 'ha', 'ba', 'jw', 'su'
         ]
         return languages
+    
+    def get_performance_stats(self) -> Dict[str, Any]:
+        """Get performance statistics for monitoring.
+        
+        Returns:
+            Performance statistics dictionary
+        """
+        if not self.config.enable_performance_monitoring:
+            return {}
+        
+        stats = {
+            'whisper_model': self.model_name,
+            'device': str(self.device),
+            'model_loaded': self.model is not None,
+            
+            # Enhanced language detection stats
+            'enhanced_language_detection': {
+                'enabled': True,
+                'max_samples': self.config.max_language_samples,
+                'confidence_threshold': self.config.language_confidence_threshold,
+                'caching_enabled': self.config.enable_language_caching,
+                'cached_languages': len(self._language_cache) if hasattr(self, '_language_cache') else 0
+            },
+            
+            # VAD stats
+            'vad': self.vad_processor.get_performance_stats() if self.vad_processor else {'enabled': False},
+            
+            # Anomaly detection stats
+            'anomaly_detection': {
+                'enabled': self.config.enable_anomaly_detection,
+                'repetition_threshold': self.config.anomaly_repetition_threshold,
+                'max_retry_attempts': self.config.max_retry_attempts,
+                'retry_shift_duration': self.config.retry_shift_duration
+            }
+        }
+        
+        return stats
