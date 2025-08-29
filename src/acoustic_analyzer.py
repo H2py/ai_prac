@@ -4,10 +4,9 @@ Acoustic analysis module for extracting acoustic features from audio.
 
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Union, Tuple
+from typing import List, Dict, Any, Optional, Union
 import numpy as np
 import librosa
-from dataclasses import dataclass
 import warnings
 
 try:
@@ -17,10 +16,13 @@ try:
 except ImportError:
     PARSELMOUTH_AVAILABLE = False
     parselmouth = None
+    call = None
 
 from src.utils.audio_utils import load_audio, split_audio_chunks
 from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
 from config.settings import ProcessingConfig
+from src.models.segments import AcousticSegment
+from src.models.base import BaseSegment
 
 
 logger = logging.getLogger(__name__)
@@ -28,98 +30,7 @@ perf_logger = PerformanceLogger(logger)
 warnings.filterwarnings('ignore', category=UserWarning)
 
 
-@dataclass
-class AcousticFeatures:
-    """Container for acoustic features."""
     
-    start: float
-    end: float
-    
-    # Energy-based features
-    rms_energy: float
-    zero_crossing_rate: float
-    
-    # Spectral features
-    spectral_centroid: float
-    spectral_rolloff: float
-    spectral_flux: float
-    spectral_bandwidth: float
-    
-    # Pitch features
-    pitch_mean: Optional[float] = None
-    pitch_std: Optional[float] = None
-    pitch_min: Optional[float] = None
-    pitch_max: Optional[float] = None
-    
-    # Formants
-    f1: Optional[float] = None
-    f2: Optional[float] = None
-    f3: Optional[float] = None
-    
-    # MFCC features (13 coefficients)
-    mfcc: Optional[np.ndarray] = None
-    
-    # Voice quality
-    jitter: Optional[float] = None
-    shimmer: Optional[float] = None
-    hnr: Optional[float] = None  # Harmonics-to-noise ratio
-    
-    # Tempo
-    tempo: Optional[float] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary."""
-        result = {
-            'start': self.start,
-            'end': self.end,
-            'duration': self.end - self.start,
-            'energy': {
-                'rms': self.rms_energy,
-                'zero_crossing_rate': self.zero_crossing_rate
-            },
-            'spectral': {
-                'centroid': self.spectral_centroid,
-                'rolloff': self.spectral_rolloff,
-                'flux': self.spectral_flux,
-                'bandwidth': self.spectral_bandwidth
-            }
-        }
-        
-        # Add pitch features if available
-        if self.pitch_mean is not None:
-            result['pitch'] = {
-                'mean': self.pitch_mean,
-                'std': self.pitch_std,
-                'min': self.pitch_min,
-                'max': self.pitch_max,
-                'range': self.pitch_max - self.pitch_min if self.pitch_max and self.pitch_min else 0
-            }
-        
-        # Add formants if available
-        if self.f1 is not None:
-            result['formants'] = {
-                'f1': self.f1,
-                'f2': self.f2,
-                'f3': self.f3
-            }
-        
-        # Add MFCC if available
-        if self.mfcc is not None:
-            result['mfcc'] = self.mfcc.tolist() if isinstance(self.mfcc, np.ndarray) else self.mfcc
-        
-        # Add voice quality if available
-        if self.jitter is not None:
-            result['voice_quality'] = {
-                'jitter': self.jitter,
-                'shimmer': self.shimmer,
-                'hnr': self.hnr
-            }
-        
-        # Add tempo if available
-        if self.tempo is not None:
-            result['tempo'] = self.tempo
-        
-        return result
 
 
 class AcousticAnalyzer:
@@ -143,9 +54,9 @@ class AcousticAnalyzer:
     def analyze(
         self,
         audio_path: Union[str, Path],
-        segments: Optional[List[Dict]] = None,
+        segments: Optional[List[Union[Dict, BaseSegment]]] = None,
         sample_rate: int = 16000
-    ) -> List[AcousticFeatures]:
+    ) -> List[AcousticSegment]:
         """Extract acoustic features for audio segments.
         
         Args:
@@ -173,16 +84,24 @@ class AcousticAnalyzer:
                 progress = ProgressLogger(logger, total=len(segments))
                 
                 for segment in segments:
-                    start_sample = int(segment['start'] * sr)
-                    end_sample = int(segment['end'] * sr)
+                    # Handle both dict and BaseSegment types
+                    if isinstance(segment, BaseSegment):
+                        start_time = segment.start
+                        end_time = segment.end
+                    else:
+                        start_time = segment['start']
+                        end_time = segment['end']
+                        
+                    start_sample = int(start_time * sr)
+                    end_sample = int(end_time * sr)
                     segment_audio = audio_data[start_sample:end_sample]
                     
                     if len(segment_audio) > 0:
                         features = self.extract_features(
                             segment_audio,
                             sr,
-                            start_time=segment['start'],
-                            end_time=segment['end']
+                            start_time=start_time,
+                            end_time=end_time
                         )
                         features_list.append(features)
                     
@@ -218,12 +137,7 @@ class AcousticAnalyzer:
             duration = perf_logger.stop_timer("acoustic_analysis")
             logger.info(f"Acoustic analysis completed in {duration:.2f}s")
             
-            # Convert dataclasses to dictionaries for compatibility
-            feature_dicts = []
-            for feat in features_list:
-                feature_dicts.append(feat.to_dict())
-            
-            return feature_dicts
+            return features_list
             
         except Exception as e:
             perf_logger.stop_timer("acoustic_analysis")
@@ -236,7 +150,7 @@ class AcousticAnalyzer:
         sample_rate: int,
         start_time: float = 0.0,
         end_time: Optional[float] = None
-    ) -> AcousticFeatures:
+    ) -> AcousticSegment:
         """Extract all acoustic features from audio chunk.
         
         Args:
@@ -273,28 +187,74 @@ class AcousticAnalyzer:
         # Extract tempo
         tempo = self._extract_tempo(audio_chunk, sample_rate)
         
-        return AcousticFeatures(
+        # Create flattened acoustic features dictionary for the model
+        flattened_features: Dict[str, float] = {}
+        
+        # Add energy features
+        if rms_energy is not None:
+            flattened_features['rms_energy'] = rms_energy
+        if zcr is not None:
+            flattened_features['zero_crossing_rate'] = zcr
+        
+        # Add spectral features
+        for key, value in spectral_features.items():
+            if value is not None:
+                flattened_features[f'spectral_{key}'] = value
+        
+        # Add pitch features
+        for key, value in pitch_features.items():
+            if value is not None:
+                flattened_features[f'pitch_{key}'] = value
+        
+        # Add formant features
+        for key, value in formants.items():
+            if value is not None:
+                flattened_features[f'formant_{key}'] = value
+        
+        # Add voice quality features
+        for key, value in voice_quality.items():
+            if value is not None:
+                flattened_features[f'voice_{key}'] = value
+        
+        # Add MFCC features (as separate entries)
+        if mfcc is not None:
+            for i, coeff in enumerate(mfcc):
+                flattened_features[f'mfcc_{i}'] = float(coeff)
+        
+        # Add tempo
+        if tempo is not None:
+            flattened_features['tempo'] = tempo
+        
+        # Also store structured features for backward compatibility
+        structured_features = {
+            'energy': {
+                'rms': rms_energy,
+                'zero_crossing_rate': zcr
+            },
+            'spectral': spectral_features,
+            'pitch': pitch_features,
+            'formants': formants,
+            'mfcc': mfcc.tolist() if mfcc is not None else None,
+            'voice_quality': voice_quality,
+            'tempo': tempo
+        }
+        
+        # Create AcousticSegment with proper individual properties
+        segment = AcousticSegment(
             start=start_time,
             end=end_time,
-            rms_energy=rms_energy,
-            zero_crossing_rate=zcr,
-            spectral_centroid=spectral_features['centroid'],
-            spectral_rolloff=spectral_features['rolloff'],
-            spectral_flux=spectral_features['flux'],
-            spectral_bandwidth=spectral_features['bandwidth'],
+            confidence=1.0,  # Always confident in acoustic features
             pitch_mean=pitch_features.get('mean'),
             pitch_std=pitch_features.get('std'),
-            pitch_min=pitch_features.get('min'),
-            pitch_max=pitch_features.get('max'),
-            f1=formants.get('f1'),
-            f2=formants.get('f2'),
-            f3=formants.get('f3'),
-            mfcc=mfcc,
-            jitter=voice_quality.get('jitter'),
-            shimmer=voice_quality.get('shimmer'),
-            hnr=voice_quality.get('hnr'),
-            tempo=tempo
+            rms_energy=rms_energy,
+            spectral_centroid=spectral_features.get('centroid'),
+            features=flattened_features
         )
+        
+        # Store structured features as additional attribute for backward compatibility
+        segment.structured_features = structured_features  # type: ignore[attr-defined]
+        
+        return segment
     
     def _extract_rms_energy(self, audio_chunk: np.ndarray) -> float:
         """Extract RMS energy.
@@ -391,7 +351,7 @@ class AcousticAnalyzer:
             Dictionary of pitch features
         """
         try:
-            if PARSELMOUTH_AVAILABLE:
+            if PARSELMOUTH_AVAILABLE and parselmouth is not None:
                 # Use Parselmouth for accurate pitch extraction
                 sound = parselmouth.Sound(audio_chunk, sampling_frequency=sample_rate)
                 pitch = sound.to_pitch()
@@ -450,7 +410,7 @@ class AcousticAnalyzer:
             Dictionary of formant frequencies
         """
         try:
-            if PARSELMOUTH_AVAILABLE:
+            if PARSELMOUTH_AVAILABLE and parselmouth is not None:
                 # Use Parselmouth for formant extraction
                 sound = parselmouth.Sound(audio_chunk, sampling_frequency=sample_rate)
                 formant = sound.to_formant_burg()
@@ -520,7 +480,7 @@ class AcousticAnalyzer:
             frequencies = np.sort(frequencies)
             
             # Approximate formants
-            formants = {'f1': None, 'f2': None, 'f3': None}
+            formants: Dict[str, Optional[float]] = {'f1': None, 'f2': None, 'f3': None}
             if len(frequencies) >= 1:
                 formants['f1'] = float(frequencies[0])
             if len(frequencies) >= 2:
@@ -577,7 +537,7 @@ class AcousticAnalyzer:
             Dictionary of voice quality measures
         """
         try:
-            if PARSELMOUTH_AVAILABLE:
+            if PARSELMOUTH_AVAILABLE and parselmouth is not None and call is not None:
                 sound = parselmouth.Sound(audio_chunk, sampling_frequency=sample_rate)
                 
                 # Extract jitter
@@ -624,7 +584,7 @@ class AcousticAnalyzer:
             # These are rough approximations
             
             # Estimate jitter (pitch variation)
-            f0, voiced_flag, _ = librosa.pyin(
+            f0, _, _ = librosa.pyin(
                 audio_chunk,
                 fmin=50,
                 fmax=500,
@@ -694,7 +654,11 @@ class AcousticAnalyzer:
         try:
             # Extract tempo using onset detection
             onset_env = librosa.onset.onset_strength(y=audio_chunk, sr=sample_rate)
-            tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=sample_rate)
+            # Use the newer API if available, fall back to deprecated one
+            try:
+                tempo = librosa.feature.rhythm.tempo(onset_envelope=onset_env, sr=sample_rate)
+            except AttributeError:
+                tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=sample_rate)
             
             if len(tempo) > 0:
                 return float(tempo[0])
@@ -706,7 +670,7 @@ class AcousticAnalyzer:
     
     def get_feature_statistics(
         self,
-        features_list: List[AcousticFeatures]
+        features_list: List[AcousticSegment]
     ) -> Dict[str, Any]:
         """Calculate statistics from acoustic features.
         
@@ -725,25 +689,78 @@ class AcousticAnalyzer:
             'total_duration': sum(f.end - f.start for f in features_list)
         }
         
-        # Calculate statistics for each feature type
-        feature_types = [
-            ('rms_energy', 'energy'),
-            ('zero_crossing_rate', 'zcr'),
-            ('spectral_centroid', 'centroid'),
-            ('pitch_mean', 'pitch'),
-            ('tempo', 'tempo')
+        # Calculate statistics for each feature type  
+        energy_values: List[float] = []
+        zcr_values: List[float] = []
+        centroid_values: List[float] = []
+        pitch_values: List[float] = []
+        tempo_values: List[float] = []
+        
+        for f in features_list:
+            # Try to get values from individual properties first (preferred)
+            if f.rms_energy is not None:
+                energy_values.append(f.rms_energy)
+            if hasattr(f, 'spectral_centroid') and f.spectral_centroid is not None:
+                centroid_values.append(f.spectral_centroid)
+            if f.pitch_mean is not None:
+                pitch_values.append(f.pitch_mean)
+                
+            # Also check flattened features
+            if f.features:
+                if 'rms_energy' in f.features and f.rms_energy is None:
+                    energy_values.append(f.features['rms_energy'])
+                if 'zero_crossing_rate' in f.features:
+                    zcr_values.append(f.features['zero_crossing_rate'])
+                if 'spectral_centroid' in f.features and (not hasattr(f, 'spectral_centroid') or f.spectral_centroid is None):
+                    centroid_values.append(f.features['spectral_centroid'])
+                if 'pitch_mean' in f.features and f.pitch_mean is None:
+                    pitch_values.append(f.features['pitch_mean'])
+                if 'tempo' in f.features:
+                    tempo_values.append(f.features['tempo'])
+                    
+            # Fallback to structured features if available
+            if hasattr(f, 'structured_features'):
+                struct_features = getattr(f, 'structured_features', None)
+                if struct_features:
+                    # Extract energy features
+                    energy_dict = struct_features.get('energy', {})
+                    if isinstance(energy_dict, dict):
+                        if energy_dict.get('rms') is not None and len(energy_values) == 0:
+                            energy_values.append(energy_dict['rms'])
+                        if energy_dict.get('zero_crossing_rate') is not None:
+                            zcr_values.append(energy_dict['zero_crossing_rate'])
+                            
+                    # Extract spectral features  
+                    spectral_dict = struct_features.get('spectral', {})
+                    if isinstance(spectral_dict, dict) and spectral_dict.get('centroid') is not None and len(centroid_values) == 0:
+                        centroid_values.append(spectral_dict['centroid'])
+                        
+                    # Extract pitch features
+                    pitch_dict = struct_features.get('pitch', {})
+                    if isinstance(pitch_dict, dict) and pitch_dict.get('mean') is not None and len(pitch_values) == 0:
+                        pitch_values.append(pitch_dict['mean'])
+                        
+                    # Extract tempo
+                    if struct_features.get('tempo') is not None and len(tempo_values) == 0:
+                        tempo_values.append(struct_features['tempo'])
+        
+        # Add statistics for each feature type
+        feature_arrays = [
+            (energy_values, 'energy'),
+            (zcr_values, 'zcr'),
+            (centroid_values, 'centroid'),
+            (pitch_values, 'pitch'),
+            (tempo_values, 'tempo')
         ]
         
-        for attr_name, display_name in feature_types:
-            values = [getattr(f, attr_name) for f in features_list 
-                     if getattr(f, attr_name) is not None]
-            
+        for values, display_name in feature_arrays:
             if values:
-                stats[f'{display_name}_stats'] = {
+                feature_stats = {
                     'mean': float(np.mean(values)),
                     'std': float(np.std(values)),
                     'min': float(np.min(values)),
                     'max': float(np.max(values))
                 }
+                stats[f'{display_name}_stats'] = feature_stats
         
         return stats

@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Union, Tuple
 import numpy as np
 from dataclasses import dataclass
+
+# Import new models for compatibility  
+from src.models.segments import TranscriptionSegment
 from collections import defaultdict
 
 from src.utils.audio_utils import load_audio, split_audio_chunks
@@ -22,26 +25,7 @@ logger = logging.getLogger(__name__)
 perf_logger = PerformanceLogger(logger)
 
 
-@dataclass
-class TranscriptionSegment:
-    """Transcription segment with timing and text."""
-    start: float
-    end: float
-    text: str
-    language: Optional[str] = None
-    confidence: Optional[float] = None
-    speaker: Optional[str] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary."""
-        return {
-            'start': self.start,
-            'end': self.end,
-            'text': self.text,
-            'language': self.language,
-            'confidence': self.confidence,
-            'speaker': self.speaker
-        }
+# Using unified TranscriptionSegment from src.models.segments
 
 
 class SpeechRecognizer:
@@ -228,7 +212,7 @@ class SpeechRecognizer:
                             for trans in result:
                                 trans.start += start_time
                                 trans.end += start_time
-                                trans.speaker = speaker
+                                trans.speaker_id = speaker
                                 transcriptions.append(trans)
                     
                     progress.update(message=f"Transcribed segment {i+1}/{len(segments)}")
@@ -283,7 +267,9 @@ class SpeechRecognizer:
             if audio.dtype != np.float32:
                 audio = audio.astype(np.float32)
             
-            # Transcribe
+            # Transcribe with null check
+            if self.model is None:
+                raise RuntimeError("Model not initialized")
             result = self.model.transcribe(
                 audio,
                 language=language,
@@ -297,21 +283,54 @@ class SpeechRecognizer:
             
             if 'segments' in result:
                 for seg in result['segments']:
+                    # Ensure seg is a dictionary (Whisper returns dict segments)
+                    if not isinstance(seg, dict):
+                        continue
+                    
+                    # Safe access with type checking
+                    start_val = seg.get('start', 0)
+                    start_time = float(start_val) if isinstance(start_val, (int, float)) else 0.0
+                    end_val = seg.get('end', 0)
+                    end_time = float(end_val) if isinstance(end_val, (int, float)) else 0.0
+                    text_content = seg.get('text', '')
+                    if isinstance(text_content, list):
+                        text_content = ' '.join(str(t) for t in text_content)
+                    elif not isinstance(text_content, str):
+                        text_content = str(text_content)
+                    
+                    detected_lang = result.get('language', language)
+                    if isinstance(detected_lang, list):
+                        detected_lang = detected_lang[0] if detected_lang else language
+                    elif not isinstance(detected_lang, str):
+                        detected_lang = language or 'en'
+                    
                     trans = TranscriptionSegment(
-                        start=seg['start'],
-                        end=seg['end'],
-                        text=seg['text'].strip(),
-                        language=result.get('language', language),
-                        confidence=seg.get('confidence')
+                        start=start_time,
+                        end=end_time,
+                        text=text_content.strip() if hasattr(text_content, 'strip') else str(text_content),
+                        language=detected_lang,
+                        confidence=seg.get('confidence', 0.0)
                     )
                     transcriptions.append(trans)
             else:
-                # Single segment
+                # Single segment with safe type handling
+                text_content = result.get('text', '')
+                if isinstance(text_content, list):
+                    text_content = ' '.join(str(t) for t in text_content)
+                elif not isinstance(text_content, str):
+                    text_content = str(text_content)
+                    
+                detected_lang = result.get('language', language)
+                if isinstance(detected_lang, list):
+                    detected_lang = detected_lang[0] if detected_lang else language
+                elif not isinstance(detected_lang, str):
+                    detected_lang = language or 'en'
+                    
                 trans = TranscriptionSegment(
                     start=0.0,
                     end=len(audio) / sample_rate,
-                    text=result.get('text', '').strip(),
-                    language=result.get('language', language)
+                    text=text_content.strip() if hasattr(text_content, 'strip') else str(text_content),
+                    language=detected_lang
                 )
                 transcriptions.append(trans)
             
@@ -347,13 +366,17 @@ class SpeechRecognizer:
         
         if segments:
             for i, segment in enumerate(segments):
+                # Ensure segment is a dictionary
+                if not isinstance(segment, dict):
+                    segment = {'start': i * 3.0, 'end': (i + 1) * 3.0, 'speaker': f'speaker_{i+1}'}
+                
                 trans = TranscriptionSegment(
                     start=segment.get('start', 0),
                     end=segment.get('end', 0),
                     text=f"[화자 {i+1} 발화 내용]",
                     language='ko',
                     confidence=0.95,
-                    speaker=segment.get('speaker', f'speaker_{i+1}')
+                    speaker_id=segment.get('speaker', f'speaker_{i+1}')
                 )
                 transcriptions.append(trans)
         else:
@@ -368,7 +391,7 @@ class SpeechRecognizer:
                     text=f"[세그먼트 {i+1} 텍스트]",
                     language='ko',
                     confidence=0.95,
-                    speaker=f'speaker_1'
+                    speaker_id=f'speaker_1'
                 )
                 transcriptions.append(trans)
         
@@ -464,9 +487,13 @@ class SpeechRecognizer:
             for lang_key in probabilities_map:
                 avg_probabilities[lang_key] = sum(probabilities_map[lang_key]) / len(probabilities_map[lang_key])
             
-            # Get most confident language
-            detected_lang = max(avg_probabilities, key=avg_probabilities.get)
-            confidence = avg_probabilities[detected_lang]
+            # Get most confident language with proper type checking
+            if avg_probabilities:
+                detected_lang = max(avg_probabilities.keys(), key=lambda k: avg_probabilities.get(k, 0.0))
+                confidence = avg_probabilities[detected_lang]
+            else:
+                logger.warning("No average probabilities available")
+                return None
             
             duration_used = perf_logger.stop_timer("enhanced_language_detection")
             
@@ -516,7 +543,14 @@ class SpeechRecognizer:
         
         # Pad or trim to 30 seconds as Whisper expects
         import whisper
-        return whisper.pad_or_trim(fragment)
+        padded = whisper.pad_or_trim(fragment)
+        # Ensure we return numpy array
+        if hasattr(padded, 'cpu'):
+            return padded.cpu().numpy()  # type: ignore[attr-defined]
+        elif hasattr(padded, 'numpy'):
+            return padded.numpy()  # type: ignore[attr-defined]
+        else:
+            return np.asarray(padded)
     
     def _detect_language_fragment(self, audio_fragment: np.ndarray) -> Optional[Dict[str, float]]:
         """Detect language for a single audio fragment.
@@ -530,13 +564,29 @@ class SpeechRecognizer:
         try:
             import whisper
             
-            # Create mel spectrogram
+            # Create mel spectrogram with null checks
+            if self.model is None:
+                logger.warning("Model not initialized for language detection")
+                return None
+                
             mel = whisper.log_mel_spectrogram(audio_fragment).to(self.model.device)
             
             # Detect language
             _, probs = self.model.detect_language(mel)
             
-            return dict(probs)
+            # Convert probs to dict safely
+            if hasattr(probs, 'cpu'):
+                probs = probs.cpu()  # type: ignore[attr-defined]
+            if hasattr(probs, 'numpy'):
+                probs = probs.numpy()  # type: ignore[attr-defined]
+            
+            # Convert to proper dict
+            if hasattr(probs, 'items'):
+                return dict(probs)  # type: ignore[call-overload,arg-type]
+            else:
+                # If it's a tensor/array, create language mapping
+                # This is a fallback - in practice whisper returns proper dict
+                return {'detected': float(probs) if isinstance(probs, (int, float)) else 0.5}
             
         except Exception as e:
             logger.debug(f"Fragment language detection failed: {e}")
@@ -621,7 +671,7 @@ class SpeechRecognizer:
     def _has_repetitive_pattern(self, text: str) -> bool:
         """Check for repetitive character patterns."""
         # Check for repeated characters (e.g., "AAAAA...")
-        char_counts = {}
+        char_counts: Dict[str, int] = {}
         for char in text:
             if char.isalpha():
                 char_counts[char] = char_counts.get(char, 0) + 1
@@ -641,7 +691,7 @@ class SpeechRecognizer:
             return False
         
         # Check if more than 60% of words are the same
-        word_counts = {}
+        word_counts: Dict[str, int] = {}
         for word in words:
             word_counts[word] = word_counts.get(word, 0) + 1
         
@@ -752,6 +802,8 @@ class SpeechRecognizer:
                 audio = audio.astype(np.float32)
             
             # Transcribe without word timestamps for speed
+            if self.model is None:
+                raise RuntimeError("Model not initialized")
             result = self.model.transcribe(
                 audio,
                 language=language,
@@ -760,15 +812,28 @@ class SpeechRecognizer:
                 word_timestamps=False
             )
             
-            text = result.get('text', '').strip()
+            # Safe text handling
+            text_content = result.get('text', '')
+            if isinstance(text_content, list):
+                text_content = ' '.join(str(t) for t in text_content)
+            elif not isinstance(text_content, str):
+                text_content = str(text_content)
+                
+            text = text_content.strip() if hasattr(text_content, 'strip') else str(text_content)
             if not text:
                 return None
+            
+            detected_lang = result.get('language', language)
+            if isinstance(detected_lang, list):
+                detected_lang = detected_lang[0] if detected_lang else language
+            elif not isinstance(detected_lang, str):
+                detected_lang = language or 'en'
             
             return TranscriptionSegment(
                 start=0.0,
                 end=len(audio) / sample_rate,
                 text=text,
-                language=result.get('language', language)
+                language=detected_lang
             )
             
         except Exception as e:

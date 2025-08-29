@@ -4,7 +4,7 @@ Base classes and interfaces for the audio analysis pipeline.
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Union
 from pathlib import Path
 from datetime import datetime
 
@@ -22,9 +22,10 @@ class PipelineContext:
         # Data storage for each analysis step
         self.audio_file: Optional[Path] = None
         self.audio_info: Optional[Dict[str, Any]] = None
+        self.video_metadata: Optional[Dict[str, Any]] = None
         self.speaker_results: Optional[Dict[str, Any]] = None
         self.emotion_results: Optional[List] = None
-        self.acoustic_results: Optional[List[Dict]] = None
+        self.acoustic_results: Optional[List] = None
         self.transcription_results: Optional[List] = None
         
         # Pipeline state
@@ -99,6 +100,18 @@ class PipelineContext:
         """Mark a step as completed."""
         self.completed_steps.append(step_name)
         self.step_durations[step_name] = duration
+    
+    def get_performance_stats(self) -> Dict[str, Any]:
+        """Get performance statistics for the pipeline."""
+        total_time = sum(self.step_durations.values())
+        return {
+            'total_processing_time': total_time,
+            'step_durations': self.step_durations.copy(),
+            'completed_steps': len(self.completed_steps),
+            'total_errors': len(self.errors),
+            'critical_errors': len([e for e in self.errors if e.get('critical', False)]),
+            'warnings': len(self.warnings)
+        }
 
 
 class PipelineStep(ABC):

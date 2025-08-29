@@ -75,13 +75,10 @@ def quick_start():
             return
         
         # Ask for options
-        visualize = click.confirm("Generate visualization plots?", default=False)
         verbose = click.confirm("Show detailed progress?", default=True)
         
         # Build command
         cmd = f"python main.py \"{file_path}\" --output ./analysis_output --format both"
-        if visualize:
-            cmd += " --visualize"
         if verbose:
             cmd += " --verbose"
         
@@ -128,7 +125,6 @@ def quick_start():
         examples = [
             ("Basic analysis", "python main.py audio.wav"),
             ("With output directory", "python main.py audio.wav --output ./results"),
-            ("With visualizations", "python main.py audio.wav --visualize"),
             ("Export as CSV", "python main.py audio.wav --format csv"),
             ("From video file", "python main.py video.mp4"),
             ("From YouTube", 'python main.py "https://youtube.com/watch?v=..." --output ./yt'),

@@ -170,9 +170,6 @@ class OutputConfig:
     include_confidence_scores: bool = True
     include_acoustic_features: bool = True
     
-    # Visualization
-    generate_visualizations: bool = False
-    visualization_format: str = "png"
     
     # Export options
     csv_delimiter: str = ","

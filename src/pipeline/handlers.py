@@ -7,7 +7,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 import click
 
@@ -16,6 +16,7 @@ from ..result_merger import ResultMerger
 from ..enhanced_result_merger import EnhancedResultMerger
 from ..ass_exporter import ASSExporter
 from ..output_manager import OutputFormatManager, MediaInfo, ProcessingMetadata
+from ..output.formats import OutputFormat
 from config.settings import Config
 
 
@@ -121,8 +122,8 @@ class ResultProcessor:
         self, 
         context: PipelineContext, 
         use_enhanced_format: bool = False,
-        output_formats: List[str] = None,
-        processing_start_time: float = None
+        output_formats: Optional[List[str]] = None,
+        processing_start_time: Optional[float] = None
     ) -> Dict[str, Any]:
         """
         Process and export all pipeline results using enhanced output system.
@@ -166,8 +167,8 @@ class ResultProcessor:
         self, 
         results: Dict[str, Any], 
         context: PipelineContext, 
-        output_formats: List[str] = None,
-        processing_start_time: float = None
+        output_formats: Optional[List[str]] = None,
+        processing_start_time: Optional[float] = None
     ) -> Dict[str, Path]:
         """Export results using enhanced output system."""
         try:
@@ -211,12 +212,22 @@ class ResultProcessor:
                 performance_stats=context.get_performance_stats()
             )
             
+            # Convert string formats to OutputFormat enums
+            format_enums = []
+            for fmt in output_formats:
+                try:
+                    format_enums.append(OutputFormat(fmt))
+                except ValueError:
+                    # Fallback to JSON if format is not recognized
+                    self.logger.warning(f"Unknown format '{fmt}', using JSON instead")
+                    format_enums.append(OutputFormat.JSON)
+            
             # Export in multiple formats
             exported_files = output_manager.export_results(
                 results=results,
                 media_info=media_info,
                 metadata=metadata,
-                formats=output_formats
+                formats=format_enums
             )
             
             # Display export summary
@@ -230,15 +241,17 @@ class ResultProcessor:
         except Exception as e:
             self.logger.error(f"Enhanced export failed: {e}")
             # Fallback to legacy export
-            return self._export_results_legacy(results, context)
+            return self._export_results_legacy(results, context, use_enhanced_format=False)
     
-    def _export_results_legacy(self, results: Dict[str, Any], context: PipelineContext) -> Dict[str, Path]:
+    def _export_results_legacy(self, results: Dict[str, Any], context: PipelineContext, use_enhanced_format: bool = False) -> Dict[str, Path]:
         """Export results to files."""
         click.echo(f"\n{click.style('💾 Saving Results', fg='yellow', bold=True)}")
         
         exported_files = {}
         
+        # Create merger based on format preference
         if use_enhanced_format:
+            merger = EnhancedResultMerger()
             # Export enhanced format
             json_path = context.get_output_path("enhanced", "json")
             merger.export_to_json(results, json_path)
@@ -251,6 +264,7 @@ class ResultProcessor:
             
         else:
             # Standard export
+            merger = ResultMerger()
             format_type = 'both' if 'both' in self.config.output.output_format else self.config.output.output_format[0]
             exported_files = merger.export_timeline_segments(
                 results,
@@ -304,41 +318,6 @@ class ResultProcessor:
             self.logger.warning(f"ASS export failed: {e}")
             return False
     
-    def generate_visualizations(self, results: Dict[str, Any], context: PipelineContext) -> bool:
-        """Generate visualization plots if requested."""
-        if not self.config.output.generate_visualizations:
-            return True
-        
-        click.echo(f"\n{click.style('📈 Generating Visualizations', fg='yellow', bold=True)}")
-        
-        try:
-            from ..utils.visualization import create_visualization_report
-            from ..utils.audio_utils import load_audio
-            
-            # Load audio for visualization
-            audio_data, sr = load_audio(context.audio_file, sample_rate=self.config.audio.sample_rate)
-            
-            viz_dir = self.config.output.output_dir / "visualizations"
-            viz_files = create_visualization_report(
-                results,
-                audio_data=audio_data,
-                sample_rate=sr,
-                output_dir=viz_dir,
-                include_waveform=True,
-                include_spectrogram=True
-            )
-            
-            if viz_files:
-                click.echo(click.style(f"✅ Generated {len(viz_files)} visualization plots", fg='green'))
-                for plot_name, plot_path in viz_files.items():
-                    click.echo(f"  • {plot_name}: {plot_path}")
-            
-            return True
-            
-        except Exception as e:
-            click.echo(click.style(f"⚠️  Visualization generation failed: {str(e)[:100]}", fg='yellow'))
-            self.logger.warning(f"Visualization failed: {e}")
-            return False
     
     def display_summary(self, results: Dict[str, Any]):
         """Display brief analysis summary."""
