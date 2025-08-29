@@ -1,0 +1,2500 @@
+{
+  "media": {
+    "audio_file": "output/extracted_audio_20250828_202006.wav",
+    "duration": 134.4435625,
+    "sample_rate": 16000,
+    "channels": 1,
+    "language": "en",
+    "timestamp": "2025-08-28T20:24:18.588582",
+    "standards": {
+      "speech_api": "W3C Web Speech API 1.0",
+      "timed_text": "SMPTE ST 2052-1:2013",
+      "phonetic": "IPA (International Phonetic Alphabet)",
+      "emotion": "PAD (Pleasure-Arousal-Dominance) model"
+    }
+  },
+  "diarization": {
+    "turns": [
+      {
+        "segment_id": "seg_0001",
+        "start": 0.33471875,
+        "end": 1.11096875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0002",
+        "start": 2.22471875,
+        "end": 6.679718750000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0003",
+        "start": 9.075968750000001,
+        "end": 10.10534375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0004",
+        "start": 10.10534375,
+        "end": 10.13909375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0005",
+        "start": 12.349718750000001,
+        "end": 12.61971875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0006",
+        "start": 14.189093750000001,
+        "end": 14.543468750000002,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0007",
+        "start": 14.864093750000002,
+        "end": 15.960968750000003,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0008",
+        "start": 18.54284375,
+        "end": 20.550968750000003,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0009",
+        "start": 20.972843750000003,
+        "end": 21.46221875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0010",
+        "start": 21.85034375,
+        "end": 22.035968750000002,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0011",
+        "start": 24.58409375,
+        "end": 25.10721875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0012",
+        "start": 26.84534375,
+        "end": 26.879093750000003,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0013",
+        "start": 26.879093750000003,
+        "end": 27.570968750000002,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0014",
+        "start": 27.570968750000002,
+        "end": 27.621593750000002,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0015",
+        "start": 27.85784375,
+        "end": 28.16159375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0016",
+        "start": 28.43159375,
+        "end": 28.718468750000003,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0017",
+        "start": 29.17409375,
+        "end": 30.203468750000003,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0018",
+        "start": 30.49034375,
+        "end": 32.66721875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0019",
+        "start": 34.877843750000004,
+        "end": 36.07596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0020",
+        "start": 36.07596875,
+        "end": 36.10971875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0021",
+        "start": 37.10534375,
+        "end": 37.44284375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0022",
+        "start": 41.00346875,
+        "end": 41.03721875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0023",
+        "start": 41.03721875,
+        "end": 43.06221875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0024",
+        "start": 43.315343750000004,
+        "end": 43.70346875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0025",
+        "start": 44.05784375,
+        "end": 44.54721875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0026",
+        "start": 45.47534375,
+        "end": 47.955968750000004,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0027",
+        "start": 48.158468750000004,
+        "end": 48.580343750000004,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0028",
+        "start": 48.782843750000005,
+        "end": 49.96409375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0029",
+        "start": 50.267843750000004,
+        "end": 50.75721875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0030",
+        "start": 50.976593750000006,
+        "end": 51.297218750000006,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0031",
+        "start": 51.97221875,
+        "end": 52.900343750000005,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0032",
+        "start": 53.35596875,
+        "end": 54.97596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0033",
+        "start": 54.97596875,
+        "end": 55.02659375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0034",
+        "start": 55.02659375,
+        "end": 55.17846875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0035",
+        "start": 55.330343750000004,
+        "end": 57.67596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0036",
+        "start": 58.73909375,
+        "end": 60.679718750000006,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0037",
+        "start": 61.81034375,
+        "end": 62.502218750000004,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0038",
+        "start": 64.13909375,
+        "end": 65.16846875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0039",
+        "start": 65.16846875,
+        "end": 65.18534375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0040",
+        "start": 65.33721875,
+        "end": 65.86034375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0041",
+        "start": 66.36659375,
+        "end": 68.74596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0042",
+        "start": 71.24346875,
+        "end": 71.29409375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0043",
+        "start": 71.29409375,
+        "end": 72.25596875000001,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0044",
+        "start": 72.72846875,
+        "end": 72.74534375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0045",
+        "start": 72.74534375,
+        "end": 73.01534375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0046",
+        "start": 73.30221875000001,
+        "end": 75.51284375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0047",
+        "start": 76.27221875000001,
+        "end": 78.70221875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0048",
+        "start": 78.70221875,
+        "end": 78.76971875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0049",
+        "start": 79.02284375,
+        "end": 80.44034375000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0050",
+        "start": 80.65971875000001,
+        "end": 81.26721875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0051",
+        "start": 81.60471875,
+        "end": 83.10659375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0052",
+        "start": 82.53284375000001,
+        "end": 82.97159375000001,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0053",
+        "start": 83.57909375,
+        "end": 84.20346875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0054",
+        "start": 84.45659375000001,
+        "end": 88.28721875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0055",
+        "start": 91.49346875,
+        "end": 91.51034375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0056",
+        "start": 91.51034375,
+        "end": 92.18534375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0057",
+        "start": 92.45534375000001,
+        "end": 92.84346875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0058",
+        "start": 93.19784375,
+        "end": 94.75034375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0059",
+        "start": 95.20596875000001,
+        "end": 96.26909375000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0060",
+        "start": 96.33659375,
+        "end": 97.23096875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0061",
+        "start": 97.99034375000001,
+        "end": 101.31471875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0062",
+        "start": 102.68159375,
+        "end": 103.99784375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0063",
+        "start": 104.45346875000001,
+        "end": 106.54596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0064",
+        "start": 107.55846875,
+        "end": 107.89596875000001,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0065",
+        "start": 109.46534375,
+        "end": 110.49471875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0066",
+        "start": 110.93346875,
+        "end": 112.24971875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0067",
+        "start": 112.50284375000001,
+        "end": 113.02596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0068",
+        "start": 113.66721875,
+        "end": 114.10596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0069",
+        "start": 114.35909375000001,
+        "end": 118.22346875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0070",
+        "start": 119.21909375000001,
+        "end": 119.77596875,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0071",
+        "start": 119.77596875,
+        "end": 119.80971875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0072",
+        "start": 119.99534375,
+        "end": 120.50159375000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0073",
+        "start": 120.95721875000001,
+        "end": 122.20596875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0074",
+        "start": 122.56034375,
+        "end": 124.77096875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0075",
+        "start": 125.51346875,
+        "end": 127.90971875000001,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0076",
+        "start": 127.90971875000001,
+        "end": 128.23034375,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0077",
+        "start": 128.33159375,
+        "end": 128.39909375000002,
+        "speaker": "SPEAKER_01",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0078",
+        "start": 128.39909375000002,
+        "end": 128.70284375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0079",
+        "start": 129.25971875000002,
+        "end": 130.03596875,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0080",
+        "start": 130.71096875,
+        "end": 131.26784375,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      },
+      {
+        "segment_id": "seg_0081",
+        "start": 131.72346875,
+        "end": 133.93409375000002,
+        "speaker": "SPEAKER_00",
+        "confidence": 1.0
+      }
+    ],
+    "speakers": {
+      "SPEAKER_00": {
+        "id": "SPEAKER_00",
+        "total_duration": 66.45374999999993,
+        "speaking_percentage": 49.42873333931472,
+        "segment_count": 54,
+        "average_confidence": 1.0
+      },
+      "SPEAKER_01": {
+        "id": "SPEAKER_01",
+        "total_duration": 14.866875000000007,
+        "speaking_percentage": 11.058078738429746,
+        "segment_count": 27,
+        "average_confidence": 1.0
+      }
+    }
+  },
+  "asr": {
+    "utterances": []
+  },
+  "prosody": {
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 30.0,
+        "pitch": {
+          "mean_hz": 182.35484313964844,
+          "std_hz": 132.70425415039062,
+          "min_hz": 50.80788803100586,
+          "max_hz": 494.2424621582031,
+          "contour": "rising"
+        },
+        "intensity": {
+          "mean_db": -1.422816812992096,
+          "max_db": -1.067112609744072
+        },
+        "speech_rate": {
+          "syllables_per_second": 3.4722222222222223
+        },
+        "voice_quality": {
+          "jitter": 0.2092492934737261,
+          "shimmer": 1.487769365310669,
+          "hnr": 57.83987045288086
+        }
+      },
+      {
+        "start": 28.0,
+        "end": 58.0,
+        "pitch": {
+          "mean_hz": 212.313232421875,
+          "std_hz": 130.43505859375,
+          "min_hz": 50.8103141784668,
+          "max_hz": 494.2424621582031,
+          "contour": "falling"
+        },
+        "intensity": {
+          "mean_db": -1.3959814608097076,
+          "max_db": -1.0469860956072807
+        },
+        "speech_rate": {
+          "syllables_per_second": 4.166666666666667
+        },
+        "voice_quality": {
+          "jitter": 0.1750438322458843,
+          "shimmer": 1.4417197704315186,
+          "hnr": 45.27147674560547
+        }
+      },
+      {
+        "start": 56.0,
+        "end": 86.0,
+        "pitch": {
+          "mean_hz": 228.1728057861328,
+          "std_hz": 137.67491149902344,
+          "min_hz": 50.782936096191406,
+          "max_hz": 495.8779602050781,
+          "contour": "falling"
+        },
+        "intensity": {
+          "mean_db": -1.5035717189311981,
+          "max_db": -1.1276787891983986
+        },
+        "speech_rate": {
+          "syllables_per_second": 3.6764705882352944
+        },
+        "voice_quality": {
+          "jitter": 0.09792801395805766,
+          "shimmer": 1.3333498239517212,
+          "hnr": 47.74208068847656
+        }
+      },
+      {
+        "start": 84.0,
+        "end": 114.0,
+        "pitch": {
+          "mean_hz": 225.0511016845703,
+          "std_hz": 120.05616760253906,
+          "min_hz": 50.79582595825195,
+          "max_hz": 494.7334289550781,
+          "contour": "falling"
+        },
+        "intensity": {
+          "mean_db": -1.2261421233415604,
+          "max_db": -0.9196065925061703
+        },
+        "speech_rate": {
+          "syllables_per_second": 3.90625
+        },
+        "voice_quality": {
+          "jitter": 0.13753899882345474,
+          "shimmer": 1.395769715309143,
+          "hnr": 45.160789489746094
+        }
+      },
+      {
+        "start": 112.0,
+        "end": 134.4435625,
+        "pitch": {
+          "mean_hz": 211.66404724121094,
+          "std_hz": 89.1729965209961,
+          "min_hz": 50.93836975097656,
+          "max_hz": 494.5939025878906,
+          "contour": "falling"
+        },
+        "intensity": {
+          "mean_db": -1.0841142386198044,
+          "max_db": -0.8130856789648533
+        },
+        "speech_rate": {
+          "syllables_per_second": 4.166666666666667
+        },
+        "voice_quality": {
+          "jitter": 0.1287413424068733,
+          "shimmer": 1.2257248163223267,
+          "hnr": 51.79526901245117
+        }
+      }
+    ]
+  },
+  "emotions": {
+    "segments": [
+      {
+        "start": 0.33471875,
+        "end": 1.11096875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15438926064229655,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 2.22471875,
+        "end": 6.679718750000001,
+        "primary_emotion": "surprise",
+        "confidence": 0.14940402045600865,
+        "pad_model": {
+          "pleasure": 0.1,
+          "arousal": 0.8,
+          "dominance": 0
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 9.075968750000001,
+        "end": 10.10534375,
+        "primary_emotion": "disgust",
+        "confidence": 0.15518175245910565,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 10.10534375,
+        "end": 10.13909375,
+        "primary_emotion": "disgust",
+        "confidence": 0.15254520808146052,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 12.349718750000001,
+        "end": 12.61971875,
+        "primary_emotion": "fear",
+        "confidence": 0.15500179805965472,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 14.189093750000001,
+        "end": 15.960968750000003,
+        "primary_emotion": "sad",
+        "confidence": 0.15087865641814593,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": -0.4,
+          "dominance": -0.4
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 18.54284375,
+        "end": 22.035968750000002,
+        "primary_emotion": "fear",
+        "confidence": 0.15314488808427126,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 24.58409375,
+        "end": 25.10721875,
+        "primary_emotion": "fear",
+        "confidence": 0.15116988014990287,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 26.84534375,
+        "end": 26.879093750000003,
+        "primary_emotion": "disgust",
+        "confidence": 0.15134301671640069,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 26.879093750000003,
+        "end": 27.570968750000002,
+        "primary_emotion": "sad",
+        "confidence": 0.15495537766243755,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": -0.4,
+          "dominance": -0.4
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 27.570968750000002,
+        "end": 28.16159375,
+        "primary_emotion": "disgust",
+        "confidence": 0.1512618147957178,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 28.43159375,
+        "end": 30.203468750000003,
+        "primary_emotion": "fear",
+        "confidence": 0.1530087829629797,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 30.49034375,
+        "end": 32.66721875,
+        "primary_emotion": "angry",
+        "confidence": 0.15079633174557974,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 34.877843750000004,
+        "end": 36.07596875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15219119556240646,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 36.07596875,
+        "end": 36.10971875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15225716939776485,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 37.10534375,
+        "end": 37.44284375,
+        "primary_emotion": "fear",
+        "confidence": 0.15415241363698173,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 41.00346875,
+        "end": 41.03721875,
+        "primary_emotion": "disgust",
+        "confidence": 0.1527649810191891,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 41.03721875,
+        "end": 43.06221875,
+        "primary_emotion": "fear",
+        "confidence": 0.15292961921455783,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 43.315343750000004,
+        "end": 43.70346875,
+        "primary_emotion": "disgust",
+        "confidence": 0.1523148075458871,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 44.05784375,
+        "end": 44.54721875,
+        "primary_emotion": "happy",
+        "confidence": 0.15493970448967687,
+        "pad_model": {
+          "pleasure": 0.8,
+          "arousal": 0.7,
+          "dominance": 0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 45.47534375,
+        "end": 47.955968750000004,
+        "primary_emotion": "disgust",
+        "confidence": 0.1500979661519345,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 48.158468750000004,
+        "end": 48.580343750000004,
+        "primary_emotion": "disgust",
+        "confidence": 0.15259181803840932,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 48.782843750000005,
+        "end": 49.96409375,
+        "primary_emotion": "angry",
+        "confidence": 0.15391003347666107,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 50.267843750000004,
+        "end": 51.297218750000006,
+        "primary_emotion": "disgust",
+        "confidence": 0.15465976762302394,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 51.97221875,
+        "end": 52.900343750000005,
+        "primary_emotion": "disgust",
+        "confidence": 0.15155651184058347,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 53.35596875,
+        "end": 54.97596875,
+        "primary_emotion": "angry",
+        "confidence": 0.15034494931678957,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 54.97596875,
+        "end": 55.02659375,
+        "primary_emotion": "disgust",
+        "confidence": 0.1532882877076328,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 55.02659375,
+        "end": 55.17846875,
+        "primary_emotion": "angry",
+        "confidence": 0.15625215002169304,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 55.330343750000004,
+        "end": 57.67596875,
+        "primary_emotion": "fear",
+        "confidence": 0.14924961132405226,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 58.73909375,
+        "end": 60.679718750000006,
+        "primary_emotion": "angry",
+        "confidence": 0.1504364939622035,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 61.81034375,
+        "end": 62.502218750000004,
+        "primary_emotion": "disgust",
+        "confidence": 0.15382537501216,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 64.13909375,
+        "end": 65.16846875,
+        "primary_emotion": "fear",
+        "confidence": 0.15397130579262902,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 65.16846875,
+        "end": 65.18534375,
+        "primary_emotion": "neutral",
+        "confidence": 0.5,
+        "pad_model": {
+          "pleasure": 0,
+          "arousal": 0,
+          "dominance": 0
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 65.33721875,
+        "end": 65.86034375,
+        "primary_emotion": "fear",
+        "confidence": 0.15238374093005375,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 66.36659375,
+        "end": 68.74596875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15087808895505622,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 71.24346875,
+        "end": 71.29409375,
+        "primary_emotion": "disgust",
+        "confidence": 0.15222091529901854,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 71.29409375,
+        "end": 72.25596875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.1539941131464458,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 72.72846875,
+        "end": 72.74534375,
+        "primary_emotion": "neutral",
+        "confidence": 0.5,
+        "pad_model": {
+          "pleasure": 0,
+          "arousal": 0,
+          "dominance": 0
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 72.74534375,
+        "end": 75.51284375,
+        "primary_emotion": "fear",
+        "confidence": 0.1530907451942839,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 76.27221875000001,
+        "end": 78.70221875,
+        "primary_emotion": "fear",
+        "confidence": 0.15523809324006838,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 78.70221875,
+        "end": 78.76971875000001,
+        "primary_emotion": "angry",
+        "confidence": 0.15380032582684997,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 79.02284375,
+        "end": 80.44034375000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15018409191589235,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 80.65971875000001,
+        "end": 81.26721875,
+        "primary_emotion": "angry",
+        "confidence": 0.1541178762155318,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 81.60471875,
+        "end": 83.10659375,
+        "primary_emotion": "fear",
+        "confidence": 0.14709839259843333,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 82.53284375000001,
+        "end": 82.97159375000001,
+        "primary_emotion": "angry",
+        "confidence": 0.15235951584144217,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 83.57909375,
+        "end": 84.20346875,
+        "primary_emotion": "angry",
+        "confidence": 0.1502111621118656,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 84.45659375000001,
+        "end": 88.28721875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15188591353803504,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 91.49346875,
+        "end": 91.51034375,
+        "primary_emotion": "neutral",
+        "confidence": 0.5,
+        "pad_model": {
+          "pleasure": 0,
+          "arousal": 0,
+          "dominance": 0
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 91.51034375,
+        "end": 92.18534375,
+        "primary_emotion": "fear",
+        "confidence": 0.14843722774258647,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 92.45534375000001,
+        "end": 92.84346875,
+        "primary_emotion": "angry",
+        "confidence": 0.15780583906780754,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 93.19784375,
+        "end": 94.75034375,
+        "primary_emotion": "disgust",
+        "confidence": 0.14800914225483178,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 95.20596875000001,
+        "end": 96.26909375000001,
+        "primary_emotion": "fear",
+        "confidence": 0.1526557964828123,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 96.33659375,
+        "end": 97.23096875,
+        "primary_emotion": "disgust",
+        "confidence": 0.14940769452210115,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 97.99034375000001,
+        "end": 101.31471875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15061035755869387,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 102.68159375,
+        "end": 106.54596875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15186971587147005,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 107.55846875,
+        "end": 107.89596875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15336367644066495,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 109.46534375,
+        "end": 112.24971875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15265907996149114,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 112.50284375000001,
+        "end": 113.02596875,
+        "primary_emotion": "happy",
+        "confidence": 0.15632235052822155,
+        "pad_model": {
+          "pleasure": 0.8,
+          "arousal": 0.7,
+          "dominance": 0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 113.66721875,
+        "end": 114.10596875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15292282290668627,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 114.35909375000001,
+        "end": 118.22346875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15383889769794,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 119.21909375000001,
+        "end": 119.77596875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15307900220102144,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 119.77596875,
+        "end": 119.80971875,
+        "primary_emotion": "disgust",
+        "confidence": 0.15229495228867124,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 119.99534375,
+        "end": 120.50159375000001,
+        "primary_emotion": "angry",
+        "confidence": 0.15695667498768745,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 120.95721875000001,
+        "end": 122.20596875000001,
+        "primary_emotion": "disgust",
+        "confidence": 0.1515814964956661,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 122.56034375,
+        "end": 124.77096875000001,
+        "primary_emotion": "surprise",
+        "confidence": 0.14860462996793297,
+        "pad_model": {
+          "pleasure": 0.1,
+          "arousal": 0.8,
+          "dominance": 0
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 125.51346875,
+        "end": 127.90971875000001,
+        "primary_emotion": "fear",
+        "confidence": 0.15138125395628327,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 127.90971875000001,
+        "end": 128.23034375,
+        "primary_emotion": "surprise",
+        "confidence": 0.14943049440570008,
+        "pad_model": {
+          "pleasure": 0.1,
+          "arousal": 0.8,
+          "dominance": 0
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 128.33159375,
+        "end": 128.39909375000002,
+        "primary_emotion": "disgust",
+        "confidence": 0.15376996027620513,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 128.39909375000002,
+        "end": 128.70284375,
+        "primary_emotion": "fear",
+        "confidence": 0.14943963169006483,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 129.25971875000002,
+        "end": 130.03596875,
+        "primary_emotion": "fear",
+        "confidence": 0.15030485153349898,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.6,
+          "dominance": -0.6
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 130.71096875,
+        "end": 131.26784375,
+        "primary_emotion": "angry",
+        "confidence": 0.15211796731943383,
+        "pad_model": {
+          "pleasure": -0.7,
+          "arousal": 0.8,
+          "dominance": 0.7
+        },
+        "emotion_probabilities": {}
+      },
+      {
+        "start": 131.72346875,
+        "end": 133.93409375000002,
+        "primary_emotion": "disgust",
+        "confidence": 0.15113212741186818,
+        "pad_model": {
+          "pleasure": -0.8,
+          "arousal": 0.2,
+          "dominance": 0.2
+        },
+        "emotion_probabilities": {}
+      }
+    ]
+  },
+  "indices": {
+    "speaker_index": {
+      "SPEAKER_00": [
+        "seg_0001",
+        "seg_0002",
+        "seg_0003",
+        "seg_0013",
+        "seg_0016",
+        "seg_0017",
+        "seg_0018",
+        "seg_0019",
+        "seg_0023",
+        "seg_0024",
+        "seg_0025",
+        "seg_0026",
+        "seg_0028",
+        "seg_0029",
+        "seg_0030",
+        "seg_0031",
+        "seg_0032",
+        "seg_0034",
+        "seg_0035",
+        "seg_0036",
+        "seg_0037",
+        "seg_0039",
+        "seg_0040",
+        "seg_0041",
+        "seg_0042",
+        "seg_0044",
+        "seg_0048",
+        "seg_0049",
+        "seg_0050",
+        "seg_0051",
+        "seg_0053",
+        "seg_0054",
+        "seg_0056",
+        "seg_0057",
+        "seg_0058",
+        "seg_0059",
+        "seg_0060",
+        "seg_0061",
+        "seg_0062",
+        "seg_0063",
+        "seg_0065",
+        "seg_0066",
+        "seg_0067",
+        "seg_0068",
+        "seg_0069",
+        "seg_0071",
+        "seg_0072",
+        "seg_0073",
+        "seg_0074",
+        "seg_0075",
+        "seg_0078",
+        "seg_0079",
+        "seg_0080",
+        "seg_0081"
+      ],
+      "SPEAKER_01": [
+        "seg_0004",
+        "seg_0005",
+        "seg_0006",
+        "seg_0007",
+        "seg_0008",
+        "seg_0009",
+        "seg_0010",
+        "seg_0011",
+        "seg_0012",
+        "seg_0014",
+        "seg_0015",
+        "seg_0020",
+        "seg_0021",
+        "seg_0022",
+        "seg_0027",
+        "seg_0033",
+        "seg_0038",
+        "seg_0043",
+        "seg_0045",
+        "seg_0046",
+        "seg_0047",
+        "seg_0052",
+        "seg_0055",
+        "seg_0064",
+        "seg_0070",
+        "seg_0076",
+        "seg_0077"
+      ]
+    },
+    "time_index": [
+      {
+        "id": "seg_0001",
+        "start": 0.33471875,
+        "end": 1.11096875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0002",
+        "start": 2.22471875,
+        "end": 6.679718750000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0003",
+        "start": 9.075968750000001,
+        "end": 10.10534375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0004",
+        "start": 10.10534375,
+        "end": 10.13909375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0005",
+        "start": 12.349718750000001,
+        "end": 12.61971875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0006",
+        "start": 14.189093750000001,
+        "end": 14.543468750000002,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0007",
+        "start": 14.864093750000002,
+        "end": 15.960968750000003,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0008",
+        "start": 18.54284375,
+        "end": 20.550968750000003,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0009",
+        "start": 20.972843750000003,
+        "end": 21.46221875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0010",
+        "start": 21.85034375,
+        "end": 22.035968750000002,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0011",
+        "start": 24.58409375,
+        "end": 25.10721875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0012",
+        "start": 26.84534375,
+        "end": 26.879093750000003,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0013",
+        "start": 26.879093750000003,
+        "end": 27.570968750000002,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0014",
+        "start": 27.570968750000002,
+        "end": 27.621593750000002,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0015",
+        "start": 27.85784375,
+        "end": 28.16159375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0016",
+        "start": 28.43159375,
+        "end": 28.718468750000003,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0017",
+        "start": 29.17409375,
+        "end": 30.203468750000003,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0018",
+        "start": 30.49034375,
+        "end": 32.66721875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0019",
+        "start": 34.877843750000004,
+        "end": 36.07596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0020",
+        "start": 36.07596875,
+        "end": 36.10971875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0021",
+        "start": 37.10534375,
+        "end": 37.44284375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0022",
+        "start": 41.00346875,
+        "end": 41.03721875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0023",
+        "start": 41.03721875,
+        "end": 43.06221875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0024",
+        "start": 43.315343750000004,
+        "end": 43.70346875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0025",
+        "start": 44.05784375,
+        "end": 44.54721875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0026",
+        "start": 45.47534375,
+        "end": 47.955968750000004,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0027",
+        "start": 48.158468750000004,
+        "end": 48.580343750000004,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0028",
+        "start": 48.782843750000005,
+        "end": 49.96409375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0029",
+        "start": 50.267843750000004,
+        "end": 50.75721875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0030",
+        "start": 50.976593750000006,
+        "end": 51.297218750000006,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0031",
+        "start": 51.97221875,
+        "end": 52.900343750000005,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0032",
+        "start": 53.35596875,
+        "end": 54.97596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0033",
+        "start": 54.97596875,
+        "end": 55.02659375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0034",
+        "start": 55.02659375,
+        "end": 55.17846875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0035",
+        "start": 55.330343750000004,
+        "end": 57.67596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0036",
+        "start": 58.73909375,
+        "end": 60.679718750000006,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0037",
+        "start": 61.81034375,
+        "end": 62.502218750000004,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0038",
+        "start": 64.13909375,
+        "end": 65.16846875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0039",
+        "start": 65.16846875,
+        "end": 65.18534375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0040",
+        "start": 65.33721875,
+        "end": 65.86034375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0041",
+        "start": 66.36659375,
+        "end": 68.74596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0042",
+        "start": 71.24346875,
+        "end": 71.29409375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0043",
+        "start": 71.29409375,
+        "end": 72.25596875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0044",
+        "start": 72.72846875,
+        "end": 72.74534375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0045",
+        "start": 72.74534375,
+        "end": 73.01534375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0046",
+        "start": 73.30221875000001,
+        "end": 75.51284375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0047",
+        "start": 76.27221875000001,
+        "end": 78.70221875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0048",
+        "start": 78.70221875,
+        "end": 78.76971875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0049",
+        "start": 79.02284375,
+        "end": 80.44034375000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0050",
+        "start": 80.65971875000001,
+        "end": 81.26721875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0051",
+        "start": 81.60471875,
+        "end": 83.10659375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0052",
+        "start": 82.53284375000001,
+        "end": 82.97159375000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0053",
+        "start": 83.57909375,
+        "end": 84.20346875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0054",
+        "start": 84.45659375000001,
+        "end": 88.28721875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0055",
+        "start": 91.49346875,
+        "end": 91.51034375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0056",
+        "start": 91.51034375,
+        "end": 92.18534375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0057",
+        "start": 92.45534375000001,
+        "end": 92.84346875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0058",
+        "start": 93.19784375,
+        "end": 94.75034375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0059",
+        "start": 95.20596875000001,
+        "end": 96.26909375000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0060",
+        "start": 96.33659375,
+        "end": 97.23096875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0061",
+        "start": 97.99034375000001,
+        "end": 101.31471875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0062",
+        "start": 102.68159375,
+        "end": 103.99784375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0063",
+        "start": 104.45346875000001,
+        "end": 106.54596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0064",
+        "start": 107.55846875,
+        "end": 107.89596875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0065",
+        "start": 109.46534375,
+        "end": 110.49471875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0066",
+        "start": 110.93346875,
+        "end": 112.24971875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0067",
+        "start": 112.50284375000001,
+        "end": 113.02596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0068",
+        "start": 113.66721875,
+        "end": 114.10596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0069",
+        "start": 114.35909375000001,
+        "end": 118.22346875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0070",
+        "start": 119.21909375000001,
+        "end": 119.77596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0071",
+        "start": 119.77596875,
+        "end": 119.80971875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0072",
+        "start": 119.99534375,
+        "end": 120.50159375000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0073",
+        "start": 120.95721875000001,
+        "end": 122.20596875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0074",
+        "start": 122.56034375,
+        "end": 124.77096875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0075",
+        "start": 125.51346875,
+        "end": 127.90971875000001,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0076",
+        "start": 127.90971875000001,
+        "end": 128.23034375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0077",
+        "start": 128.33159375,
+        "end": 128.39909375000002,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0078",
+        "start": 128.39909375000002,
+        "end": 128.70284375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0079",
+        "start": 129.25971875000002,
+        "end": 130.03596875,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0080",
+        "start": 130.71096875,
+        "end": 131.26784375,
+        "type": "speech"
+      },
+      {
+        "id": "seg_0081",
+        "start": 131.72346875,
+        "end": 133.93409375000002,
+        "type": "speech"
+      }
+    ],
+    "emotion_index": {
+      "disgust": [
+        {
+          "start": 0.33471875,
+          "end": 1.11096875
+        },
+        {
+          "start": 9.075968750000001,
+          "end": 10.10534375
+        },
+        {
+          "start": 10.10534375,
+          "end": 10.13909375
+        },
+        {
+          "start": 26.84534375,
+          "end": 26.879093750000003
+        },
+        {
+          "start": 27.570968750000002,
+          "end": 28.16159375
+        },
+        {
+          "start": 34.877843750000004,
+          "end": 36.07596875
+        },
+        {
+          "start": 36.07596875,
+          "end": 36.10971875
+        },
+        {
+          "start": 41.00346875,
+          "end": 41.03721875
+        },
+        {
+          "start": 43.315343750000004,
+          "end": 43.70346875
+        },
+        {
+          "start": 45.47534375,
+          "end": 47.955968750000004
+        },
+        {
+          "start": 48.158468750000004,
+          "end": 48.580343750000004
+        },
+        {
+          "start": 50.267843750000004,
+          "end": 51.297218750000006
+        },
+        {
+          "start": 51.97221875,
+          "end": 52.900343750000005
+        },
+        {
+          "start": 54.97596875,
+          "end": 55.02659375
+        },
+        {
+          "start": 61.81034375,
+          "end": 62.502218750000004
+        },
+        {
+          "start": 66.36659375,
+          "end": 68.74596875
+        },
+        {
+          "start": 71.24346875,
+          "end": 71.29409375
+        },
+        {
+          "start": 93.19784375,
+          "end": 94.75034375
+        },
+        {
+          "start": 96.33659375,
+          "end": 97.23096875
+        },
+        {
+          "start": 102.68159375,
+          "end": 106.54596875
+        },
+        {
+          "start": 113.66721875,
+          "end": 114.10596875
+        },
+        {
+          "start": 119.21909375000001,
+          "end": 119.77596875
+        },
+        {
+          "start": 119.77596875,
+          "end": 119.80971875
+        },
+        {
+          "start": 120.95721875000001,
+          "end": 122.20596875000001
+        },
+        {
+          "start": 128.33159375,
+          "end": 128.39909375000002
+        },
+        {
+          "start": 131.72346875,
+          "end": 133.93409375000002
+        }
+      ],
+      "surprise": [
+        {
+          "start": 2.22471875,
+          "end": 6.679718750000001
+        },
+        {
+          "start": 122.56034375,
+          "end": 124.77096875000001
+        },
+        {
+          "start": 127.90971875000001,
+          "end": 128.23034375
+        }
+      ],
+      "fear": [
+        {
+          "start": 12.349718750000001,
+          "end": 12.61971875
+        },
+        {
+          "start": 18.54284375,
+          "end": 22.035968750000002
+        },
+        {
+          "start": 24.58409375,
+          "end": 25.10721875
+        },
+        {
+          "start": 28.43159375,
+          "end": 30.203468750000003
+        },
+        {
+          "start": 37.10534375,
+          "end": 37.44284375
+        },
+        {
+          "start": 41.03721875,
+          "end": 43.06221875
+        },
+        {
+          "start": 55.330343750000004,
+          "end": 57.67596875
+        },
+        {
+          "start": 64.13909375,
+          "end": 65.16846875
+        },
+        {
+          "start": 65.33721875,
+          "end": 65.86034375
+        },
+        {
+          "start": 71.29409375,
+          "end": 72.25596875000001
+        },
+        {
+          "start": 72.74534375,
+          "end": 75.51284375
+        },
+        {
+          "start": 76.27221875000001,
+          "end": 78.70221875
+        },
+        {
+          "start": 79.02284375,
+          "end": 80.44034375000001
+        },
+        {
+          "start": 81.60471875,
+          "end": 83.10659375
+        },
+        {
+          "start": 84.45659375000001,
+          "end": 88.28721875000001
+        },
+        {
+          "start": 91.51034375,
+          "end": 92.18534375
+        },
+        {
+          "start": 95.20596875000001,
+          "end": 96.26909375000001
+        },
+        {
+          "start": 97.99034375000001,
+          "end": 101.31471875000001
+        },
+        {
+          "start": 107.55846875,
+          "end": 107.89596875000001
+        },
+        {
+          "start": 109.46534375,
+          "end": 112.24971875000001
+        },
+        {
+          "start": 114.35909375000001,
+          "end": 118.22346875000001
+        },
+        {
+          "start": 125.51346875,
+          "end": 127.90971875000001
+        },
+        {
+          "start": 128.39909375000002,
+          "end": 128.70284375
+        },
+        {
+          "start": 129.25971875000002,
+          "end": 130.03596875
+        }
+      ],
+      "sad": [
+        {
+          "start": 14.189093750000001,
+          "end": 15.960968750000003
+        },
+        {
+          "start": 26.879093750000003,
+          "end": 27.570968750000002
+        }
+      ],
+      "angry": [
+        {
+          "start": 30.49034375,
+          "end": 32.66721875
+        },
+        {
+          "start": 48.782843750000005,
+          "end": 49.96409375
+        },
+        {
+          "start": 53.35596875,
+          "end": 54.97596875
+        },
+        {
+          "start": 55.02659375,
+          "end": 55.17846875
+        },
+        {
+          "start": 58.73909375,
+          "end": 60.679718750000006
+        },
+        {
+          "start": 78.70221875,
+          "end": 78.76971875000001
+        },
+        {
+          "start": 80.65971875000001,
+          "end": 81.26721875
+        },
+        {
+          "start": 82.53284375000001,
+          "end": 82.97159375000001
+        },
+        {
+          "start": 83.57909375,
+          "end": 84.20346875
+        },
+        {
+          "start": 92.45534375000001,
+          "end": 92.84346875
+        },
+        {
+          "start": 119.99534375,
+          "end": 120.50159375000001
+        },
+        {
+          "start": 130.71096875,
+          "end": 131.26784375
+        }
+      ],
+      "happy": [
+        {
+          "start": 44.05784375,
+          "end": 44.54721875
+        },
+        {
+          "start": 112.50284375000001,
+          "end": 113.02596875
+        }
+      ],
+      "neutral": [
+        {
+          "start": 65.16846875,
+          "end": 65.18534375
+        },
+        {
+          "start": 72.72846875,
+          "end": 72.74534375
+        },
+        {
+          "start": 91.49346875,
+          "end": 91.51034375
+        }
+      ]
+    }
+  },
+  "statistics": {
+    "speech": {
+      "total_speech_time": 81.32062499999994,
+      "total_turns": 81,
+      "average_turn_duration": 1.0039583333333326,
+      "speaker_count": 2
+    },
+    "linguistic": {},
+    "prosodic": {
+      "average_pitch_hz": 211.9112060546875,
+      "pitch_range_hz": 45.817962646484375
+    },
+    "emotional": {
+      "emotion_distribution": {
+        "disgust": 26,
+        "surprise": 3,
+        "fear": 24,
+        "sad": 2,
+        "angry": 12,
+        "happy": 2,
+        "neutral": 3
+      },
+      "dominant_emotion": "disgust",
+      "emotion_changes": 60
+    }
+  }
+}

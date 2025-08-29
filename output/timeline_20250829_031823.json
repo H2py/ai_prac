@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "input_source": "pipeline-info",
+    "processing_timestamp": "2025-08-29T03:18:23.681228",
+    "configuration": {
+      "sample_rate": 16000,
+      "gpu_enabled": true,
+      "segment_duration": 30.0,
+      "emotion_threshold": 0.6
+    }
+  },
+  "summary": {
+    "total_speakers": 0,
+    "total_segments": 0,
+    "analysis_timestamp": "2025-08-29T03:18:23.681243"
+  },
+  "timeline": [],
+  "speakers": {},
+  "emotions": {},
+  "acoustics": {},
+  "transcriptions": {}
+}

@@ -70,6 +70,7 @@ class ProcessingConfig:
     continue_on_error: bool = True
     max_retries: int = 3
     retry_delay: float = 1.0
+    require_all: bool = False  # Exit on any failure if True
 
 
 @dataclass
@@ -96,6 +97,7 @@ class OutputConfig:
     pretty_print_json: bool = True
     csv_delimiter: str = ","
     csv_include_header: bool = True
+    export_ass: bool = False  # Export ASS subtitle files
 
 
 @dataclass
