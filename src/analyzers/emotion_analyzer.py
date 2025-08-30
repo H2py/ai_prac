@@ -24,14 +24,14 @@ except ImportError:
     AutoFeatureExtractor = None
     pipeline = None
 
-from src.utils.audio_utils import load_audio, split_audio_chunks
-from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
-from src.utils.memory_manager import memory_manager
-from src.utils.lazy_loader import LazyModelLoader, model_registry, require_model
-from src.utils.cleanup_manager import cleanup_manager, register_for_cleanup
+from ..utils import load_audio, split_audio_chunks
+from ..utils import PerformanceLogger, ProgressLogger, log_exception
+from ..memory import memory_manager
+from ..memory import LazyModelLoader, model_registry, require_model
+from ..memory import cleanup_manager, register_for_cleanup
 from config.settings import ModelConfig
-from src.models.segments import EmotionSegment
-from src.models.base import BaseSegment
+from ..models import EmotionSegment
+from ..models import BaseSegment
 
 
 logger = logging.getLogger(__name__)

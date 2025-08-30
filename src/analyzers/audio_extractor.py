@@ -18,11 +18,11 @@ except ImportError:
     VideoFileClip = None
 import ffmpeg
 
-from src.utils.audio_utils import (
+from ..utils import (
     load_audio, save_audio, convert_audio_format,
     get_audio_info, validate_audio_file, apply_preprocessing
 )
-from src.utils.logger import PerformanceLogger, log_exception
+from ..utils import PerformanceLogger, log_exception
 from config.settings import AudioConfig
 
 

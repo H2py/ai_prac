@@ -18,11 +18,11 @@ except ImportError:
     parselmouth = None
     call = None
 
-from src.utils.audio_utils import load_audio, split_audio_chunks
-from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
+from ..utils import load_audio, split_audio_chunks
+from ..utils import PerformanceLogger, ProgressLogger, log_exception
 from config.settings import ProcessingConfig
-from src.models.segments import AcousticSegment
-from src.models.base import BaseSegment
+from ..models import AcousticSegment
+from ..models import BaseSegment
 
 
 logger = logging.getLogger(__name__)

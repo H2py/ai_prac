@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import click
 
 from src.pipeline import PipelineBuilder
-from src.utils.logger import setup_logger
+from src.utils import setup_logger
 from config.settings import Config
 
 
@@ -360,8 +360,8 @@ def version():
 @cli.command()
 def formats():
     """Show supported formats."""
-    from src.audio_extractor import AudioExtractor
-    from src.output_manager import OutputFormatManager
+    from src.analyzers import AudioExtractor
+    from src.output import OutputFormatManager
     
     extractor = AudioExtractor()
     formats = extractor.get_supported_formats()

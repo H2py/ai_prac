@@ -10,10 +10,10 @@ import torch
 from dataclasses import dataclass
 
 # Import new models for compatibility
-from src.models.segments import SpeechSegment as NewSpeechSegment
+from ..models import SpeechSegment as NewSpeechSegment
 
-from src.utils.audio_utils import load_audio
-from src.utils.logger import PerformanceLogger
+from ..utils import load_audio
+from ..utils import PerformanceLogger
 from config.settings import WhisperConfig
 
 logger = logging.getLogger(__name__)
