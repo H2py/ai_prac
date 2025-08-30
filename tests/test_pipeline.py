@@ -119,7 +119,7 @@ def test_pipeline():
         results = merger.merge_all_results(
             speaker_results=speaker_results,
             emotion_results=predictions if 'predictions' in locals() else None,
-            metadata={'test': True, 'audio_file': str(test_audio)}
+            metadata={}
         )
         
         if results:

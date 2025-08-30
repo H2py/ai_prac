@@ -26,6 +26,9 @@ except ImportError:
 
 from src.utils.audio_utils import load_audio, split_audio_chunks
 from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
+from src.utils.memory_manager import memory_manager
+from src.utils.lazy_loader import LazyModelLoader, model_registry, require_model
+from src.utils.cleanup_manager import cleanup_manager, register_for_cleanup
 from config.settings import ModelConfig
 from src.models.segments import EmotionSegment
 from src.models.base import BaseSegment
@@ -74,7 +77,7 @@ class EmotionAnalyzer:
     """Emotion recognition using transformer models."""
     
     def __init__(self, config: Optional[ModelConfig] = None):
-        """Initialize emotion analyzer.
+        """Initialize emotion analyzer with lazy loading.
         
         Args:
             config: Model configuration
@@ -87,12 +90,32 @@ class EmotionAnalyzer:
         
         self.config = config or ModelConfig()
         self.device = self._setup_device()
-        self.model = None
-        self.feature_extractor = None
-        self.emotion_pipeline = None
-        self._initialized = False
         
-        logger.info(f"EmotionAnalyzer initialized with device: {self.device}")
+        # Set up lazy loaders for models
+        self._model_loader = LazyModelLoader(
+            loader_func=self._load_emotion_model,
+            model_name="emotion_model"
+        )
+        
+        self._feature_extractor_loader = LazyModelLoader(
+            loader_func=self._load_feature_extractor,
+            model_name="emotion_feature_extractor"
+        )
+        
+        self._pipeline_loader = LazyModelLoader(
+            loader_func=self._load_emotion_pipeline,
+            model_name="emotion_pipeline"
+        )
+        
+        # Register with global registry for memory management
+        model_registry.register("emotion_model", self._load_emotion_model)
+        model_registry.register("emotion_feature_extractor", self._load_feature_extractor)
+        model_registry.register("emotion_pipeline", self._load_emotion_pipeline)
+        
+        # Register for cleanup tracking
+        register_for_cleanup(self, self.cleanup)
+        
+        logger.info(f"EmotionAnalyzer initialized with lazy loading (device: {self.device})")
     
     def _setup_device(self) -> torch.device:
         """Setup computation device.
@@ -118,74 +141,221 @@ class EmotionAnalyzer:
         
         return device
     
-    def initialize(self) -> None:
-        """Initialize the emotion recognition model."""
-        if self._initialized:
-            return
+    def _load_emotion_model(self):
+        """Load the emotion recognition model.
         
-        perf_logger.start_timer("model_initialization")
+        Returns:
+            Loaded emotion model
+        """
+        perf_logger.start_timer("emotion_model_loading")
         
         try:
             model_name = self.config.emotion_model
             logger.info(f"Loading emotion recognition model: {model_name}")
             
-            # Try to load the model
-            try:
-                # Load model and feature extractor
-                self.model = AutoModelForAudioClassification.from_pretrained(
-                    model_name,
-                    cache_dir=self.config.cache_dir
-                )
-                self.feature_extractor = AutoFeatureExtractor.from_pretrained(
-                    model_name,
-                    cache_dir=self.config.cache_dir
-                )
-                
-                # Move model to device
-                self.model = self.model.to(self.device)
-                self.model.eval()
-                
-                logger.info(f"Model loaded successfully: {model_name}")
-                
-            except Exception as e:
-                logger.warning(f"Could not load {model_name}: {e}")
-                logger.info("Trying alternative model...")
-                
-                # Try alternative model
-                alternative_model = "superb/hubert-base-superb-er"
-                try:
-                    self.emotion_pipeline = pipeline(
-                        "audio-classification",
-                        model=alternative_model,
-                        device=0 if self.device.type == "cuda" else -1
-                    )
-                    logger.info(f"Loaded alternative model: {alternative_model}")
-                except Exception:
-                    logger.warning("Could not load emotion model, using mock predictions")
-                    self._setup_mock_model()
+            model = AutoModelForAudioClassification.from_pretrained(
+                model_name,
+                cache_dir=self.config.cache_dir
+            )
             
-            self._initialized = True
-            duration = perf_logger.stop_timer("model_initialization")
-            logger.info(f"Emotion model initialized in {duration:.2f}s")
+            # Move model to device
+            model = model.to(self.device)
+            model.eval()
+            
+            duration = perf_logger.stop_timer("emotion_model_loading")
+            logger.info(f"Emotion model loaded in {duration:.2f}s")
+            
+            return model
             
         except Exception as e:
-            perf_logger.stop_timer("model_initialization")
-            log_exception(logger, e, "Failed to initialize emotion model")
-            raise
+            perf_logger.stop_timer("emotion_model_loading")
+            logger.error(f"Failed to load emotion model: {e}")
+            return None
+    
+    def _load_feature_extractor(self):
+        """Load the feature extractor.
+        
+        Returns:
+            Loaded feature extractor
+        """
+        try:
+            model_name = self.config.emotion_model
+            logger.info(f"Loading feature extractor: {model_name}")
+            
+            feature_extractor = AutoFeatureExtractor.from_pretrained(
+                model_name,
+                cache_dir=self.config.cache_dir
+            )
+            
+            logger.info("Feature extractor loaded successfully")
+            return feature_extractor
+            
+        except Exception as e:
+            logger.error(f"Failed to load feature extractor: {e}")
+            return None
+    
+    def _load_emotion_pipeline(self):
+        """Load alternative emotion pipeline.
+        
+        Returns:
+            Loaded emotion pipeline or None
+        """
+        try:
+            alternative_model = "superb/hubert-base-superb-er"
+            logger.info(f"Loading alternative emotion pipeline: {alternative_model}")
+            
+            emotion_pipeline = pipeline(
+                "audio-classification",
+                model=alternative_model,
+                device=0 if self.device.type == "cuda" else -1
+            )
+            
+            logger.info("Alternative emotion pipeline loaded successfully")
+            return emotion_pipeline
+            
+        except Exception as e:
+            logger.error(f"Failed to load emotion pipeline: {e}")
+            return None
+    
+    @property
+    def model(self):
+        """Lazily loaded emotion model."""
+        return self._model_loader.load()
+    
+    @property  
+    def feature_extractor(self):
+        """Lazily loaded feature extractor."""
+        return self._feature_extractor_loader.load()
+    
+    @property
+    def emotion_pipeline(self):
+        """Lazily loaded emotion pipeline."""
+        return self._pipeline_loader.load()
+    
+    def unload_models(self) -> None:
+        """Unload all models to free memory."""
+        logger.info("Unloading emotion analysis models")
+        self._model_loader.unload()
+        self._feature_extractor_loader.unload()
+        self._pipeline_loader.unload()
+        
+        # Clear from global registry
+        model_registry.unload("emotion_model")
+        model_registry.unload("emotion_feature_extractor")
+        model_registry.unload("emotion_pipeline")
+    
+    def cleanup(self) -> None:
+        """Comprehensive cleanup of all resources."""
+        logger.info("Performing comprehensive cleanup of EmotionAnalyzer")
+        
+        # Unload models
+        self.unload_models()
+        
+        # Clear memory pools
+        memory_manager.clear_memory()
+        
+        # Check for memory pressure and trigger cleanup if needed
+        if cleanup_manager.check_memory_pressure():
+            cleanup_manager.periodic_cleanup()
+        
+        logger.info("EmotionAnalyzer cleanup completed")
     
     def _setup_mock_model(self) -> None:
         """Setup mock model for testing when real model unavailable."""
         logger.warning("Using mock emotion model for demonstration")
-        self.model = None
-        self.feature_extractor = None
-        self.emotion_pipeline = None
+        return None
+    
+    def _calculate_optimal_batch_size(self, audio_duration: float) -> int:
+        """Calculate optimal batch size based on available memory and audio duration.
+        
+        Args:
+            audio_duration: Total audio duration in seconds
+            
+        Returns:
+            Optimal batch size for processing
+        """
+        # Estimate memory per audio second (rough approximation)
+        # 16kHz * 4 bytes * processing overhead (5x) = ~320KB per second
+        memory_per_second_bytes = 16000 * 4 * 5
+        
+        # Calculate batch size based on available memory
+        batch_size = memory_manager.get_optimal_batch_size(
+            sample_size=memory_per_second_bytes,
+            max_memory_mb=None,  # Use available system memory
+            safety_factor=0.6    # Conservative for emotion processing
+        )
+        
+        # Adjust based on audio duration (longer audio = smaller batches)
+        if audio_duration > 300:  # > 5 minutes
+            batch_size = max(1, batch_size // 4)
+        elif audio_duration > 60:  # > 1 minute
+            batch_size = max(1, batch_size // 2)
+        
+        # Reasonable limits
+        batch_size = max(1, min(batch_size, 32))
+        
+        logger.debug(f"Calculated optimal batch size: {batch_size} for {audio_duration:.1f}s audio")
+        return batch_size
+    
+    def _process_audio_chunks_batched(self, 
+                                    audio_chunks: List[Tuple[np.ndarray, Tuple[float, float]]],
+                                    sample_rate: int = 16000) -> List[EmotionSegment]:
+        """Process audio chunks in optimized batches.
+        
+        Args:
+            audio_chunks: List of (audio_data, (start_time, end_time)) tuples
+            sample_rate: Audio sample rate
+            
+        Returns:
+            List of emotion predictions
+        """
+        if not audio_chunks:
+            return []
+        
+        # Calculate optimal batch size
+        total_duration = sum((end - start) for _, (start, end) in audio_chunks)
+        batch_size = self._calculate_optimal_batch_size(total_duration)
+        
+        predictions = []
+        
+        # Log memory usage before processing
+        memory_manager.log_memory_usage("before emotion batch processing")
+        
+        # Process in batches
+        for i in range(0, len(audio_chunks), batch_size):
+            batch = audio_chunks[i:i + batch_size]
+            
+            # Process batch
+            batch_predictions = []
+            for chunk_audio, (start_time, end_time) in batch:
+                pred = self.predict_emotion(chunk_audio, sample_rate)
+                pred.start = start_time
+                pred.end = end_time
+                batch_predictions.append(pred)
+            
+            predictions.extend(batch_predictions)
+            
+            # Clear memory after each batch
+            if i % (batch_size * 2) == 0:  # Every 2 batches
+                memory_manager.clear_memory(force_gc=False)
+            
+            logger.debug(f"Processed batch {i//batch_size + 1}/{(len(audio_chunks)-1)//batch_size + 1}")
+        
+        # Final memory cleanup
+        memory_manager.clear_memory(force_gc=True)
+        memory_manager.log_memory_usage("after emotion batch processing")
+        
+        # Check for memory pressure after batch processing
+        cleanup_manager.periodic_cleanup()
+        
+        return predictions
     
     def predict_emotion(
         self,
         audio_chunk: np.ndarray,
         sample_rate: int = 16000
     ) -> EmotionSegment:
-        """Predict emotion for a single audio chunk.
+        """Predict emotion for a single audio chunk with lazy loading and memory optimization.
         
         Args:
             audio_chunk: Audio data array
@@ -194,20 +364,46 @@ class EmotionAnalyzer:
         Returns:
             Emotion prediction
         """
-        if not self._initialized:
-            self.initialize()
+        # Models are now lazy loaded through property access
+        
+        # Use memory pool for processing arrays to reduce allocations
+        processing_array = None
+        normalized_array = None
         
         try:
+            # Get processing array from memory pool
+            if audio_chunk.size > 0:
+                processing_array = memory_manager.get_memory_pool(
+                    "emotion_processing", 
+                    audio_chunk.shape, 
+                    audio_chunk.dtype
+                )
+                np.copyto(processing_array, audio_chunk)
+                
+                # Normalize audio if needed (using pooled array)
+                if processing_array.max() > 1.0 or processing_array.min() < -1.0:
+                    normalized_array = memory_manager.get_memory_pool(
+                        "emotion_normalized",
+                        audio_chunk.shape,
+                        np.float32
+                    )
+                    np.copyto(normalized_array, processing_array / np.max(np.abs(processing_array)))
+                    audio_data = normalized_array
+                else:
+                    audio_data = processing_array
+            else:
+                audio_data = audio_chunk
+            
             if self.emotion_pipeline:
                 # Use pipeline
-                result = self.emotion_pipeline(audio_chunk)
+                result = self.emotion_pipeline(audio_data)
                 scores = self._process_pipeline_output(result)
             elif self.model and self.feature_extractor:
                 # Use model directly
-                scores = self._predict_with_model(audio_chunk, sample_rate)
+                scores = self._predict_with_model(audio_data, sample_rate)
             else:
                 # Use mock prediction
-                scores = self._mock_prediction(audio_chunk)
+                scores = self._mock_prediction(audio_data)
             
             # Get primary emotion
             primary_emotion = max(scores, key=scores.get)
@@ -217,8 +413,8 @@ class EmotionAnalyzer:
                 start=0.0,
                 end=len(audio_chunk) / sample_rate,
                 confidence=confidence,
-                emotion=primary_emotion,
-                scores=scores
+                predicted_emotion=primary_emotion,
+                emotion_scores=scores
             )
             
         except Exception as e:
@@ -228,9 +424,15 @@ class EmotionAnalyzer:
                 start=0.0,
                 end=len(audio_chunk) / sample_rate,
                 confidence=0.5,
-                emotion='neutral',
-                scores={'neutral': 0.5}
+                predicted_emotion='neutral',
+                emotion_scores={'neutral': 0.5}
             )
+        finally:
+            # Return arrays to memory pool for reuse
+            if processing_array is not None:
+                memory_manager.return_to_pool("emotion_processing", processing_array)
+            if normalized_array is not None:
+                memory_manager.return_to_pool("emotion_normalized", normalized_array)
     
     def _predict_with_model(
         self,
@@ -411,7 +613,7 @@ class EmotionAnalyzer:
                 progress.complete()
                 
             else:
-                # Analyze entire audio in chunks
+                # Analyze entire audio in chunks with optimized batching
                 chunks = split_audio_chunks(
                     audio_data,
                     sample_rate,
@@ -419,22 +621,10 @@ class EmotionAnalyzer:
                     overlap=0.5
                 )
                 
-                progress = ProgressLogger(logger, total=len(chunks))
+                logger.info(f"Processing {len(chunks)} audio chunks with optimized batching")
                 
-                for chunk, (start_time, end_time) in chunks:
-                    if len(chunk) > 0:
-                        # Predict emotion
-                        pred = self.predict_emotion(chunk, sample_rate)
-                        
-                        # Update times
-                        pred.start = start_time
-                        pred.end = end_time
-                        
-                        predictions.append(pred)
-                    
-                    progress.update(message=f"Processed chunk {len(predictions)}")
-                
-                progress.complete()
+                # Use optimized batch processing
+                predictions = self._process_audio_chunks_batched(chunks, sample_rate)
             
             # Merge similar adjacent predictions
             predictions = self._merge_predictions(predictions)
@@ -496,8 +686,8 @@ class EmotionAnalyzer:
                     confidence=(current.confidence * current_duration + 
                                pred.confidence * pred_duration) / 
                               (current_duration + pred_duration),
-                    emotion=current.emotion,
-                    scores=all_scores
+                    predicted_emotion=current.predicted_emotion,
+                    emotion_scores=all_scores
                 )
                 # Preserve speaker info
                 current.speaker = getattr(current, 'speaker', None)

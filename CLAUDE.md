@@ -18,14 +18,14 @@ python main.py test_audio.wav
 
 ### Running Tests
 ```bash
-# Run all tests
-python -m pytest tests/ -v
+# Run main pipeline test
+python tests/test_pipeline.py
 
-# Run specific test file
+# Run enhanced video pipeline tests  
 python -m pytest tests/test_enhanced_video_pipeline.py -v
 
-# Run single test method
-python -m pytest tests/test_enhanced_video_pipeline.py::TestEnhancedVideoProcessing::test_youtube_embed_url_detection -v
+# Run all tests
+python -m pytest tests/ -v
 
 # Test with coverage
 python -m pytest tests/ --cov=src --cov-report=html
@@ -69,7 +69,7 @@ python main.py generate-config --output config.yaml
 
 ## Architecture Overview
 
-### Core Pipeline Architecture
+### Core Pipeline Architecture *(Simplified from 37 to 30 files)*
 This is a **modular pipeline system** built around the **Pipeline Pattern** with five distinct processing steps:
 
 1. **AudioExtractionStep**: Extracts audio from files/URLs (supports MP4, YouTube, YouTube embeds)
@@ -77,6 +77,12 @@ This is a **modular pipeline system** built around the **Pipeline Pattern** with
 3. **EmotionAnalysisStep**: Recognizes emotions from speech segments  
 4. **AcousticAnalysisStep**: Extracts acoustic features (pitch, energy, spectral features)
 5. **SpeechRecognitionStep**: Converts speech to text using OpenAI Whisper (optional)
+
+**Recent Improvements:**
+- ✅ Removed unused `src/processors/` and `src/resources/` directories
+- ✅ Simplified test suite (10 → 4 test files)
+- ✅ Fixed all Pylance type checking errors
+- ✅ Enhanced legacy compatibility for EmotionSegment
 
 ### Key Architectural Components
 
@@ -89,12 +95,19 @@ This is a **modular pipeline system** built around the **Pipeline Pattern** with
 **Enhanced Output System (`src/output_manager.py`)**:
 - Unified system supporting 6 output formats: JSON, ASS, VTT, SRT, Backend API, Frontend JSON
 - `OutputFormatManager`: Handles simultaneous export to multiple formats
-- `MediaInfo` and `ProcessingMetadata`: Structured data containers for metadata
+- `OutputFormat` enum: Defines supported export formats
+- Works with `src/output/` pipeline for advanced formatting
+
+**Unified Data Models (`src/models/`)**:
+- `BaseSegment`: Abstract base class for all analysis segments
+- `SpeakerSegment`, `EmotionSegment`, `AcousticSegment`, `TranscriptionSegment`: Specialized segment types
+- `AnalysisResults`: Container for all analysis data
+- `ProcessingContext` and `ProcessingResult`: Pipeline execution containers
 
 **Configuration System (`config/settings.py`)**:
 - Dataclass-based configuration with YAML support
 - `AudioConfig`, `ModelConfig`, `WhisperConfig`, `VideoConfig`, `OutputConfig` classes
-- Environment variable overrides and validation (`config/settings.py:287`)
+- Environment variable overrides and validation
 
 ### Enhanced Video Processing Features
 - **YouTube Embed URL Support**: Handles `youtube.com/embed/...` and `youtube-nocookie.com/embed/...`

@@ -22,6 +22,8 @@ except ImportError:
 
 from src.utils.audio_utils import load_audio, split_audio_chunks
 from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
+from src.utils.lazy_loader import LazyModelLoader, model_registry
+from src.utils.cleanup_manager import cleanup_manager, register_for_cleanup
 from config.settings import ModelConfig
 
 
@@ -58,7 +60,7 @@ class SpeakerDiarizer:
     """Speaker diarization using pyannote-audio."""
     
     def __init__(self, config: Optional[ModelConfig] = None):
-        """Initialize speaker diarizer.
+        """Initialize speaker diarizer with lazy loading.
         
         Args:
             config: Model configuration
@@ -71,11 +73,27 @@ class SpeakerDiarizer:
         
         self.config = config or ModelConfig()
         self.device = self._setup_device()
-        self.pipeline = None
-        self.embedding_model = None
-        self._initialized = False
+        self._auth_token: Optional[str] = None
         
-        logger.info(f"SpeakerDiarizer initialized with device: {self.device}")
+        # Set up lazy loaders for models
+        self._pipeline_loader = LazyModelLoader(
+            loader_func=self._load_diarization_pipeline,
+            model_name="speaker_diarization_pipeline"
+        )
+        
+        self._embedding_loader = LazyModelLoader(
+            loader_func=self._load_embedding_model,
+            model_name="speaker_embedding_model"
+        )
+        
+        # Register with global registry for memory management
+        model_registry.register("speaker_diarization_pipeline", self._load_diarization_pipeline)
+        model_registry.register("speaker_embedding_model", self._load_embedding_model)
+        
+        # Register for cleanup tracking
+        register_for_cleanup(self, self.cleanup)
+        
+        logger.info(f"SpeakerDiarizer initialized with lazy loading (device: {self.device})")
     
     def _setup_device(self) -> torch.device:
         """Setup computation device.
@@ -101,26 +119,35 @@ class SpeakerDiarizer:
         
         return device
     
-    def initialize(self, auth_token: str) -> None:
-        """Initialize the diarization pipeline.
+    def set_auth_token(self, auth_token: str) -> None:
+        """Set the authentication token for model loading.
         
         Args:
             auth_token: Hugging Face authentication token for model access (REQUIRED)
         """
-        if self._initialized:
-            return
-        
-        # Token is mandatory
         if not auth_token:
             raise ValueError(
                 "❌ HuggingFace 토큰이 필요합니다!\n"
                 ".env 파일에 HUGGINGFACE_TOKEN을 설정하세요."
             )
         
-        perf_logger.start_timer("model_initialization")
+        self._auth_token = auth_token
+        logger.info("Authentication token set for lazy model loading")
+    
+    def _load_diarization_pipeline(self):
+        """Load the speaker diarization pipeline.
+        
+        Returns:
+            Loaded diarization pipeline
+        """
+        if not self._auth_token:
+            raise ValueError(
+                "Authentication token not set. Call set_auth_token() first."
+            )
+        
+        perf_logger.start_timer("diarization_pipeline_loading")
         
         try:
-            # Initialize diarization pipeline
             logger.info("Loading speaker diarization pipeline...")
             
             # Use the specified model or default
@@ -130,43 +157,90 @@ class SpeakerDiarizer:
             # User must accept model agreements at:
             # https://huggingface.co/pyannote/speaker-diarization-3.1
             if Pipeline is not None:
-                self.pipeline = Pipeline.from_pretrained(
+                pipeline = Pipeline.from_pretrained(
                     model_name,
-                    use_auth_token=auth_token
+                    use_auth_token=self._auth_token
                 )
             else:
                 raise ImportError("Pipeline class is not available")
             
-            if self.pipeline:
+            if pipeline:
                 # Move pipeline to device
-                self.pipeline.to(self.device)
+                pipeline.to(self.device)
             
-            # Initialize embedding model for speaker representations
+            duration = perf_logger.stop_timer("diarization_pipeline_loading")
+            logger.info(f"Diarization pipeline loaded in {duration:.2f}s")
+            
+            return pipeline
+            
+        except Exception as e:
+            perf_logger.stop_timer("diarization_pipeline_loading")
+            logger.error(f"Failed to load diarization pipeline: {e}")
+            raise
+    
+    def _load_embedding_model(self):
+        """Load the speaker embedding model.
+        
+        Returns:
+            Loaded embedding model
+        """
+        try:
             logger.info("Loading speaker embedding model...")
+            
             if PretrainedSpeakerEmbedding is not None:
-                self.embedding_model = PretrainedSpeakerEmbedding(
+                embedding_model = PretrainedSpeakerEmbedding(
                     "speechbrain/spkrec-ecapa-voxceleb",
                     device=self.device
                 )
+                logger.info("Speaker embedding model loaded successfully")
+                return embedding_model
             else:
                 logger.warning("PretrainedSpeakerEmbedding not available")
-                self.embedding_model = None
-            
-            self._initialized = True
-            duration = perf_logger.stop_timer("model_initialization")
-            logger.info(f"Models initialized in {duration:.2f}s")
-            
+                return None
+                
         except Exception as e:
-            perf_logger.stop_timer("model_initialization")
-            log_exception(logger, e, "Failed to initialize diarization pipeline")
-            raise
+            logger.error(f"Failed to load embedding model: {e}")
+            return None
+    
+    @property
+    def pipeline(self):
+        """Lazily loaded diarization pipeline."""
+        return self._pipeline_loader.load()
+    
+    @property
+    def embedding_model(self):
+        """Lazily loaded embedding model."""
+        return self._embedding_loader.load()
+    
+    def unload_models(self) -> None:
+        """Unload all models to free memory."""
+        logger.info("Unloading speaker diarization models")
+        self._pipeline_loader.unload()
+        self._embedding_loader.unload()
+        
+        # Clear from global registry
+        model_registry.unload("speaker_diarization_pipeline")
+        model_registry.unload("speaker_embedding_model")
+    
+    def cleanup(self) -> None:
+        """Comprehensive cleanup of all resources."""
+        logger.info("Performing comprehensive cleanup of SpeakerDiarizer")
+        
+        # Unload models
+        self.unload_models()
+        
+        # Check for memory pressure and trigger cleanup if needed
+        if cleanup_manager.check_memory_pressure():
+            cleanup_manager.periodic_cleanup()
+        
+        logger.info("SpeakerDiarizer cleanup completed")
     
     def _setup_offline_pipeline(self) -> None:
         """Setup a basic offline pipeline for testing."""
         # This is a fallback for when the model cannot be loaded
         # In production, you should always use the proper model with auth token
         logger.warning("Using offline/mock pipeline for demonstration")
-        self.pipeline = None
+        return None
     
     def diarize(
         self,
@@ -186,10 +260,10 @@ class SpeakerDiarizer:
         Returns:
             List of speaker segments
         """
-        if not self._initialized:
+        # Check if auth token is set
+        if not self._auth_token:
             raise RuntimeError(
-                "SpeakerDiarizer가 초기화되지 않았습니다. "
-                "initialize() 메서드를 먼저 호출하세요."
+                "Authentication token not set. Call set_auth_token() first."
             )
         
         perf_logger.start_timer("speaker_diarization")

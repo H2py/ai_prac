@@ -16,7 +16,7 @@ from ..result_merger import ResultMerger
 from ..enhanced_result_merger import EnhancedResultMerger
 from ..ass_exporter import ASSExporter
 from ..output_manager import OutputFormatManager, MediaInfo, ProcessingMetadata
-from ..output.formats import OutputFormat
+from ..output_manager import OutputFormat
 from config.settings import Config
 
 
