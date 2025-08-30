@@ -9,7 +9,7 @@ import numpy as np
 import torch
 from dataclasses import dataclass, field
 
-from src.models.segments import SpeakerSegment
+from ..models import SpeakerSegment
 
 try:
     from pyannote.audio import Pipeline
@@ -20,10 +20,10 @@ except ImportError:
     Pipeline = None
     PretrainedSpeakerEmbedding = None
 
-from src.utils.audio_utils import load_audio, split_audio_chunks
-from src.utils.logger import PerformanceLogger, ProgressLogger, log_exception
-from src.utils.lazy_loader import LazyModelLoader, model_registry
-from src.utils.cleanup_manager import cleanup_manager, register_for_cleanup
+from ..utils import load_audio, split_audio_chunks
+from ..utils import PerformanceLogger, ProgressLogger, log_exception
+from ..memory import LazyModelLoader, model_registry
+from ..memory import cleanup_manager, register_for_cleanup
 from config.settings import ModelConfig
 
 

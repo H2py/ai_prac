@@ -1,20 +1,35 @@
 """
-Audio processing utilities for the audio analysis pipeline.
+Utilities for the audio analysis pipeline.
+
+This module consolidates audio processing utilities and logging functionality
+to provide a comprehensive set of tools for audio analysis and monitoring.
 """
 
+import gc
+import logging
+import sys
+import time
 import numpy as np
 import librosa
 import soundfile as sf
+import psutil
+import colorama
 from pathlib import Path
 from typing import Tuple, Optional, Union, Dict, Any, List
-import logging
 from pydub import AudioSegment
+from datetime import datetime
+from colorama import Fore, Style
 import tempfile
 import os
+from logging.handlers import RotatingFileHandler
+
+# Initialize colorama
+colorama.init(autoreset=True)
 
 
-logger = logging.getLogger(__name__)
-
+# =====================================
+# Audio Processing Utilities
+# =====================================
 
 def load_audio(
     file_path: Union[str, Path],
@@ -41,7 +56,6 @@ def load_audio(
         IOError: If file cannot be loaded
     """
     try:
-        # Load audio using librosa - handle optional parameters
         load_kwargs = {
             'sr': sample_rate,
             'mono': mono
@@ -52,21 +66,16 @@ def load_audio(
             load_kwargs['duration'] = duration
             
         audio_data, sr = librosa.load(file_path, **load_kwargs)
-        
-        # Ensure sr is int (librosa sometimes returns float)
         sr = int(sr) if sr is not None else sample_rate
         
-        # Normalize if requested
         if normalize and len(audio_data) > 0:
             max_val = np.max(np.abs(audio_data))
             if max_val > 0:
                 audio_data = audio_data / max_val
         
-        logger.debug(f"Loaded audio: shape={audio_data.shape}, sr={sr}")
         return audio_data, sr
         
     except Exception as e:
-        logger.error(f"Failed to load audio file {file_path}: {e}")
         raise IOError(f"Cannot load audio file: {e}")
 
 
@@ -93,18 +102,14 @@ def save_audio(
         file_path = Path(file_path)
         file_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Normalize if requested
         if normalize and len(audio_data) > 0:
             max_val = np.max(np.abs(audio_data))
             if max_val > 0:
                 audio_data = audio_data / max_val
         
-        # Save using soundfile
         sf.write(file_path, audio_data, sample_rate, subtype=subtype)
-        logger.debug(f"Saved audio to {file_path}")
         
     except Exception as e:
-        logger.error(f"Failed to save audio to {file_path}: {e}")
         raise IOError(f"Cannot save audio file: {e}")
 
 
@@ -136,30 +141,23 @@ def convert_audio_format(
         input_path = Path(input_path)
         output_path = Path(output_path)
         
-        # Load audio using pydub
         audio = AudioSegment.from_file(str(input_path))
         
-        # Convert to mono if requested
         if mono and audio.channels > 1:
             audio = audio.set_channels(1)
         
-        # Set sample rate
         audio = audio.set_frame_rate(sample_rate)
         
-        # Prepare export parameters
         export_params = {'format': output_format}
         if bitrate:
             export_params['bitrate'] = bitrate
         
-        # Export
         output_path.parent.mkdir(parents=True, exist_ok=True)
         audio.export(str(output_path), **export_params)
         
-        logger.info(f"Converted {input_path} to {output_path}")
         return output_path
         
     except Exception as e:
-        logger.error(f"Failed to convert audio format: {e}")
         raise IOError(f"Audio conversion failed: {e}")
 
 
@@ -177,14 +175,10 @@ def get_audio_info(file_path: Union[str, Path]) -> Dict[str, Any]:
     """
     try:
         file_path = Path(file_path)
-        
-        # Get basic info using soundfile
         info = sf.info(str(file_path))
-        
-        # Load a small portion to get additional info
         audio_data, sr = librosa.load(file_path, sr=None, duration=1.0)
         
-        audio_info = {
+        return {
             'file_path': str(file_path),
             'file_size_mb': file_path.stat().st_size / (1024 * 1024),
             'duration_seconds': info.duration,
@@ -195,17 +189,13 @@ def get_audio_info(file_path: Union[str, Path]) -> Dict[str, Any]:
             'frames': info.frames,
             'sections': getattr(info, 'sections', 1),
             'seekable': getattr(info, 'seekable', True),
-            # Additional computed properties
             'duration_formatted': format_duration(info.duration),
             'bit_depth': get_bit_depth(info.subtype),
             'is_mono': info.channels == 1,
             'is_stereo': info.channels == 2,
         }
         
-        return audio_info
-        
     except Exception as e:
-        logger.error(f"Failed to get audio info for {file_path}: {e}")
         raise IOError(f"Cannot read audio file info: {e}")
 
 
@@ -238,31 +228,24 @@ def split_audio_chunks(
     if stride_samples <= 0:
         stride_samples = chunk_samples
         overlap_samples = 0
-        logger.warning("Overlap is too large, disabling overlap")
     
     position = 0
     while position < len(audio_data):
-        # Get chunk
         end_position = min(position + chunk_samples, len(audio_data))
         chunk = audio_data[position:end_position]
         
-        # Calculate times
         start_time = position / sample_rate
         end_time = end_position / sample_rate
         chunk_duration_actual = end_time - start_time
         
-        # Only include chunk if it meets minimum duration
         if chunk_duration_actual >= min_chunk_duration:
             chunks.append((chunk, (start_time, end_time)))
         
-        # Move to next position
         position += stride_samples
         
-        # Break if we've reached the end
         if position + int(min_chunk_duration * sample_rate) > len(audio_data):
             break
     
-    logger.debug(f"Split audio into {len(chunks)} chunks")
     return chunks
 
 
@@ -284,14 +267,11 @@ def resample_audio(
     if orig_sr == target_sr:
         return audio_data
     
-    resampled = librosa.resample(
+    return librosa.resample(
         audio_data,
         orig_sr=orig_sr,
         target_sr=target_sr
     )
-    
-    logger.debug(f"Resampled audio from {orig_sr}Hz to {target_sr}Hz")
-    return resampled
 
 
 def normalize_audio(
@@ -313,17 +293,14 @@ def normalize_audio(
         return audio_data
     
     if method == 'peak':
-        # Peak normalization
         max_val = np.max(np.abs(audio_data))
         if max_val > 0:
-            # Convert dB to linear
             target_linear = 10 ** (target_level / 20)
             normalized = audio_data * (target_linear / max_val)
         else:
             normalized = audio_data
     
     elif method == 'rms':
-        # RMS normalization
         rms = np.sqrt(np.mean(audio_data ** 2))
         if rms > 0:
             target_linear = 10 ** (target_level / 20)
@@ -334,7 +311,6 @@ def normalize_audio(
     else:
         raise ValueError(f"Unknown normalization method: {method}")
     
-    # Prevent clipping
     max_val = np.max(np.abs(normalized))
     if max_val > 1.0:
         normalized = normalized / max_val
@@ -361,10 +337,6 @@ def trim_silence(
     Returns:
         Tuple of (trimmed_audio, (start_time, end_time))
     """
-    # Convert threshold to amplitude
-    threshold = librosa.db_to_amplitude(threshold_db)
-    
-    # Trim silence
     trimmed, index = librosa.effects.trim(
         audio_data,
         top_db=-threshold_db,
@@ -372,11 +344,8 @@ def trim_silence(
         hop_length=hop_length
     )
     
-    # Calculate trimmed times
     start_time = index[0] / sample_rate
     end_time = index[1] / sample_rate
-    
-    logger.debug(f"Trimmed silence: {start_time:.2f}s - {end_time:.2f}s")
     
     return trimmed, (start_time, end_time)
 
@@ -404,15 +373,12 @@ def apply_preprocessing(
     """
     processed = audio_data.copy()
     
-    # Trim silence
     if trim_silence_flag:
         processed, _ = trim_silence(processed, sample_rate)
     
-    # Apply pre-emphasis
     if pre_emphasis:
         processed = librosa.effects.preemphasis(processed, coef=pre_emphasis_coef)
     
-    # Normalize
     if normalize:
         processed = normalize_audio(processed, method='peak')
     
@@ -497,16 +463,11 @@ def validate_audio_file(file_path: Union[str, Path]) -> bool:
     try:
         file_path = Path(file_path)
         
-        if not file_path.exists():
+        if not file_path.exists() or not file_path.is_file():
             return False
         
-        if not file_path.is_file():
-            return False
-        
-        # Try to get info
         info = sf.info(str(file_path))
         
-        # Check basic properties
         if info.duration <= 0 or info.samplerate <= 0:
             return False
         
@@ -514,3 +475,364 @@ def validate_audio_file(file_path: Union[str, Path]) -> bool:
         
     except:
         return False
+
+
+# =====================================
+# Logging Utilities
+# =====================================
+
+class ColoredFormatter(logging.Formatter):
+    """Custom formatter with colored output for console logging."""
+    
+    COLORS = {
+        'DEBUG': Fore.CYAN,
+        'INFO': Fore.GREEN,
+        'WARNING': Fore.YELLOW,
+        'ERROR': Fore.RED,
+        'CRITICAL': Fore.RED + Style.BRIGHT,
+    }
+    
+    def format(self, record: logging.LogRecord) -> str:
+        """Format log record with colors.
+        
+        Args:
+            record: Log record to format
+            
+        Returns:
+            Formatted log message
+        """
+        levelname = record.levelname
+        if levelname in self.COLORS:
+            record.levelname = f"{self.COLORS[levelname]}{levelname}{Style.RESET_ALL}"
+        
+        message = super().format(record)
+        record.levelname = levelname
+        
+        return message
+
+
+class PerformanceLogger:
+    """Logger for tracking performance metrics."""
+    
+    def __init__(self, logger: logging.Logger):
+        """Initialize performance logger.
+        
+        Args:
+            logger: Base logger instance
+        """
+        self.logger = logger
+        self.start_times: Dict[str, float] = {}
+        self.metrics: Dict[str, list] = {}
+        
+    def start_timer(self, name: str) -> None:
+        """Start a timer for a named operation.
+        
+        Args:
+            name: Name of the operation
+        """
+        self.start_times[name] = time.time()
+        self.logger.debug(f"Started timer for: {name}")
+        
+    def stop_timer(self, name: str) -> float:
+        """Stop a timer and log the duration.
+        
+        Args:
+            name: Name of the operation
+            
+        Returns:
+            Duration in seconds
+        """
+        if name not in self.start_times:
+            self.logger.warning(f"Timer '{name}' was not started")
+            return 0.0
+        
+        duration = time.time() - self.start_times[name]
+        del self.start_times[name]
+        
+        if name not in self.metrics:
+            self.metrics[name] = []
+        self.metrics[name].append(duration)
+        
+        self.logger.info(f"Completed {name} in {duration:.2f} seconds")
+        return duration
+    
+    def log_memory_usage(self) -> None:
+        """Log current memory usage."""
+        process = psutil.Process()
+        memory_info = process.memory_info()
+        memory_mb = memory_info.rss / 1024 / 1024
+        
+        system_memory = psutil.virtual_memory()
+        system_percent = system_memory.percent
+        
+        self.logger.info(
+            f"Memory usage: {memory_mb:.1f} MB "
+            f"(System: {system_percent:.1f}%)"
+        )
+    
+    def get_summary(self) -> Dict[str, Any]:
+        """Get summary of performance metrics.
+        
+        Returns:
+            Dictionary with performance summary
+        """
+        summary = {}
+        for name, times in self.metrics.items():
+            summary[name] = {
+                'count': len(times),
+                'total': sum(times),
+                'average': sum(times) / len(times) if times else 0,
+                'min': min(times) if times else 0,
+                'max': max(times) if times else 0
+            }
+        return summary
+    
+    def log_summary(self) -> None:
+        """Log performance summary."""
+        summary = self.get_summary()
+        if not summary:
+            return
+        
+        self.logger.info("Performance Summary:")
+        self.logger.info("-" * 50)
+        
+        for name, stats in summary.items():
+            self.logger.info(
+                f"{name}: "
+                f"Count={stats['count']}, "
+                f"Total={stats['total']:.2f}s, "
+                f"Avg={stats['average']:.2f}s, "
+                f"Min={stats['min']:.2f}s, "
+                f"Max={stats['max']:.2f}s"
+            )
+
+
+class ProgressLogger:
+    """Logger for tracking progress of long-running operations."""
+    
+    def __init__(self, logger: logging.Logger, total: Optional[int] = None):
+        """Initialize progress logger.
+        
+        Args:
+            logger: Base logger instance
+            total: Total number of items to process
+        """
+        self.logger = logger
+        self.total = total
+        self.current = 0
+        self.start_time = time.time()
+        
+    def update(self, increment: int = 1, message: Optional[str] = None) -> None:
+        """Update progress.
+        
+        Args:
+            increment: Number of items completed
+            message: Optional progress message
+        """
+        self.current += increment
+        
+        if self.total:
+            percentage = (self.current / self.total) * 100
+            elapsed = time.time() - self.start_time
+            
+            if self.current > 0:
+                rate = self.current / elapsed
+                eta = (self.total - self.current) / rate if rate > 0 else 0
+            else:
+                eta = 0
+            
+            progress_msg = (
+                f"Progress: {self.current}/{self.total} "
+                f"({percentage:.1f}%) - "
+                f"Elapsed: {elapsed:.1f}s - "
+                f"ETA: {eta:.1f}s"
+            )
+        else:
+            elapsed = time.time() - self.start_time
+            progress_msg = f"Progress: {self.current} items - Elapsed: {elapsed:.1f}s"
+        
+        if message:
+            progress_msg += f" - {message}"
+        
+        self.logger.info(progress_msg)
+    
+    def complete(self, message: Optional[str] = None) -> None:
+        """Mark operation as complete.
+        
+        Args:
+            message: Optional completion message
+        """
+        elapsed = time.time() - self.start_time
+        complete_msg = f"Completed {self.current} items in {elapsed:.1f}s"
+        
+        if message:
+            complete_msg += f" - {message}"
+        
+        self.logger.info(complete_msg)
+
+
+def setup_logger(
+    name: str,
+    level: str = "INFO",
+    log_file: Optional[Path] = None,
+    log_to_console: bool = True,
+    log_format: Optional[str] = None,
+    date_format: Optional[str] = None,
+    use_colors: bool = True
+) -> logging.Logger:
+    """Set up a logger with specified configuration.
+    
+    Args:
+        name: Logger name
+        level: Logging level
+        log_file: Optional log file path
+        log_to_console: Whether to log to console
+        log_format: Log message format
+        date_format: Date format for log messages
+        use_colors: Whether to use colored console output
+        
+    Returns:
+        Configured logger instance
+    """
+    logger = logging.getLogger(name)
+    logger.setLevel(getattr(logging, level.upper()))
+    logger.handlers.clear()
+    
+    if log_format is None:
+        log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    
+    if date_format is None:
+        date_format = "%Y-%m-%d %H:%M:%S"
+    
+    if log_to_console:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(getattr(logging, level.upper()))
+        
+        if use_colors:
+            console_formatter = ColoredFormatter(log_format, datefmt=date_format)
+        else:
+            console_formatter = logging.Formatter(log_format, datefmt=date_format)
+        
+        console_handler.setFormatter(console_formatter)
+        logger.addHandler(console_handler)
+    
+    if log_file:
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(getattr(logging, level.upper()))
+        file_formatter = logging.Formatter(log_format, datefmt=date_format)
+        file_handler.setFormatter(file_formatter)
+        logger.addHandler(file_handler)
+    
+    return logger
+
+
+def get_logger(name: str) -> logging.Logger:
+    """Get or create a logger with the given name.
+    
+    Args:
+        name: Logger name
+        
+    Returns:
+        Logger instance
+    """
+    return logging.getLogger(name)
+
+
+class LogContext:
+    """Context manager for temporary logging configuration."""
+    
+    def __init__(
+        self,
+        logger: logging.Logger,
+        level: Optional[str] = None,
+        suppress: bool = False
+    ):
+        """Initialize log context.
+        
+        Args:
+            logger: Logger to configure
+            level: Temporary log level
+            suppress: Whether to suppress all logging
+        """
+        self.logger = logger
+        self.original_level = logger.level
+        self.original_disabled = logger.disabled
+        
+        if suppress:
+            self.new_level = logging.CRITICAL + 1
+            self.disabled = True
+        elif level:
+            self.new_level = getattr(logging, level.upper())
+            self.disabled = False
+        else:
+            self.new_level = self.original_level
+            self.disabled = self.original_disabled
+    
+    def __enter__(self):
+        """Enter context."""
+        self.logger.setLevel(self.new_level)
+        self.logger.disabled = self.disabled
+        return self.logger
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit context."""
+        self.logger.setLevel(self.original_level)
+        self.logger.disabled = self.original_disabled
+
+
+def log_exception(logger: logging.Logger, exception: Exception, context: Optional[str] = None) -> None:
+    """Log an exception with context.
+    
+    Args:
+        logger: Logger instance
+        exception: Exception to log
+        context: Optional context information
+    """
+    error_msg = f"Exception occurred: {type(exception).__name__}: {str(exception)}"
+    
+    if context:
+        error_msg = f"{context} - {error_msg}"
+    
+    logger.error(error_msg, exc_info=True)
+
+
+def create_file_logger(
+    name: str,
+    log_file: Path,
+    level: str = "INFO",
+    max_bytes: int = 10 * 1024 * 1024,  # 10 MB
+    backup_count: int = 5
+) -> logging.Logger:
+    """Create a rotating file logger.
+    
+    Args:
+        name: Logger name
+        log_file: Log file path
+        level: Logging level
+        max_bytes: Maximum file size before rotation
+        backup_count: Number of backup files to keep
+        
+    Returns:
+        Configured logger instance
+    """
+    logger = logging.getLogger(name)
+    logger.setLevel(getattr(logging, level.upper()))
+    logger.handlers.clear()
+    
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+    handler = RotatingFileHandler(
+        log_file,
+        maxBytes=max_bytes,
+        backupCount=backup_count
+    )
+    
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    handler.setFormatter(formatter)
+    
+    logger.addHandler(handler)
+    
+    return logger

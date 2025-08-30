@@ -7,8 +7,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 import tempfile
 
-from src.audio_extractor import AudioExtractor
-from src.output_manager import OutputFormatManager, MediaInfo, ProcessingMetadata, OutputFormat
+from src.analyzers import AudioExtractor
+from src.output import OutputFormatManager, MediaInfo, ProcessingMetadata, OutputFormat
 from config.settings import VideoConfig, OutputConfig, Config
 
 

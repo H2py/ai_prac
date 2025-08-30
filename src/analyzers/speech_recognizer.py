@@ -13,14 +13,14 @@ import numpy as np
 from dataclasses import dataclass
 
 # Import new models for compatibility  
-from src.models.segments import TranscriptionSegment
+from ..models import TranscriptionSegment
 from collections import defaultdict
 
-from src.utils.audio_utils import load_audio, split_audio_chunks
-from src.utils.logger import PerformanceLogger, ProgressLogger
-from src.utils.lazy_loader import LazyModelLoader, model_registry
-from src.utils.cleanup_manager import cleanup_manager, register_for_cleanup
-from src.vad_processor import VADProcessor, SpeechSegment
+from ..utils import load_audio, split_audio_chunks
+from ..utils import PerformanceLogger, ProgressLogger
+from ..memory import LazyModelLoader, model_registry
+from ..memory import cleanup_manager, register_for_cleanup
+from .vad_processor import VADProcessor, SpeechSegment
 from config.settings import WhisperConfig
 
 logger = logging.getLogger(__name__)
