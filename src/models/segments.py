@@ -93,9 +93,19 @@ class EmotionSegment(BaseSegment):
     
     # Legacy compatibility properties
     @property
+    def emotion(self) -> str:
+        """Legacy property name."""
+        return self.predicted_emotion
+    
+    @property
     def primary_emotion(self) -> str:
         """Legacy property name."""
         return self.predicted_emotion
+    
+    @property
+    def scores(self) -> Dict[str, float]:
+        """Legacy property name."""
+        return self.emotion_scores
     
     def to_export_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for export."""

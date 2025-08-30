@@ -18,6 +18,7 @@ from .steps import (
 )
 from .handlers import ErrorHandler, ResultProcessor
 from ..utils.logger import PerformanceLogger
+from ..utils.cleanup_manager import cleanup_manager, memory_cleanup_context
 from config.settings import Config
 
 
@@ -135,6 +136,9 @@ class AudioAnalysisPipeline:
             # Display completion message
             self._display_completion_message(context)
             
+            # Perform periodic memory cleanup after pipeline execution
+            cleanup_manager.periodic_cleanup()
+            
             return {
                 'context': context,
                 'results': processed_results['results'],
@@ -244,13 +248,39 @@ class AudioAnalysisPipeline:
         ]
     
     def cleanup(self, debug: bool = False):
-        """Clean up temporary files and resources."""
+        """Clean up temporary files and resources with comprehensive memory management."""
+        self.logger.info("Starting comprehensive pipeline cleanup")
+        
         if not debug:
-            # Find audio extraction step and cleanup
+            # Clean up temporary files from steps
             for step in self.steps:
                 if hasattr(step, 'cleanup_temp_files'):
-                    step.cleanup_temp_files()
-                    break
+                    try:
+                        step.cleanup_temp_files()
+                    except Exception as e:
+                        self.logger.warning(f"Failed to cleanup temp files for {step.__class__.__name__}: {e}")
+                
+                # Clean up step-specific resources
+                if hasattr(step, 'cleanup'):
+                    try:
+                        step.cleanup()
+                    except Exception as e:
+                        self.logger.warning(f"Failed to cleanup step {step.__class__.__name__}: {e}")
+        
+        # Comprehensive memory cleanup
+        try:
+            cleanup_manager.cleanup_system_resources()
+        except Exception as e:
+            self.logger.warning(f"Failed during system resource cleanup: {e}")
+        
+        # Final memory report
+        if self.config.logging.log_memory_usage:
+            report = cleanup_manager.get_memory_report()
+            self.logger.info(f"Cleanup completed. Memory pressure: {report['memory_pressure']}")
+            if report['models']['loaded_count'] > 0:
+                self.logger.info(f"Still loaded models: {report['models']['loaded_models']}")
+        
+        self.logger.info("Pipeline cleanup completed")
 
 
 class PipelineBuilder:

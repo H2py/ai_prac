@@ -18,6 +18,8 @@ from collections import defaultdict
 
 from src.utils.audio_utils import load_audio, split_audio_chunks
 from src.utils.logger import PerformanceLogger, ProgressLogger
+from src.utils.lazy_loader import LazyModelLoader, model_registry
+from src.utils.cleanup_manager import cleanup_manager, register_for_cleanup
 from src.vad_processor import VADProcessor, SpeechSegment
 from config.settings import WhisperConfig
 
@@ -46,14 +48,27 @@ class SpeechRecognizer:
         """
         self.model_name = model_name
         self.device = device
-        self.model = None
-        self.processor = None
         
         # Enhanced features
         self.config = whisper_config or WhisperConfig()
         self.vad_processor = VADProcessor(self.config) if self.config.enable_vad else None
         self._language_cache = {}
+        
+        # Set up lazy loader for Whisper model
+        self._model_loader = LazyModelLoader(
+            loader_func=self._load_whisper_model,
+            model_name="whisper_model"
+        )
+        
+        # Register with global registry
+        model_registry.register("whisper_model", self._load_whisper_model)
+        
+        # Register for cleanup tracking
+        register_for_cleanup(self, self.cleanup)
+        
         self._setup_cache_directory()
+        
+        logger.info(f"SpeechRecognizer initialized with lazy loading (model: {model_name})")
     
     def _setup_cache_directory(self):
         """Setup language detection cache directory."""
@@ -102,8 +117,14 @@ class SpeechRecognizer:
         except Exception:
             return str(audio_path)
         
-    def initialize(self):
-        """Initialize the Whisper model."""
+    def _load_whisper_model(self):
+        """Load the Whisper model.
+        
+        Returns:
+            Loaded Whisper model or None
+        """
+        perf_logger.start_timer("whisper_model_loading")
+        
         try:
             import whisper
             import torch
@@ -115,22 +136,62 @@ class SpeechRecognizer:
             logger.info(f"Loading Whisper model '{self.model_name}' on {self.device}")
             
             # Load model
-            self.model = whisper.load_model(self.model_name, device=self.device)
-            
-            logger.info(f"Whisper model loaded successfully")
+            model = whisper.load_model(self.model_name, device=self.device)
             
             # Initialize VAD processor if enabled
             if self.vad_processor:
                 self.vad_processor.initialize()
-                
+            
+            duration = perf_logger.stop_timer("whisper_model_loading")
+            logger.info(f"Whisper model loaded in {duration:.2f}s")
+            
+            return model
+            
         except ImportError:
+            perf_logger.stop_timer("whisper_model_loading")
             logger.warning("Whisper not installed. Using fallback mode.")
             logger.info("Install with: pip install openai-whisper")
-            self.model = None
+            return None
             
         except Exception as e:
-            logger.error(f"Failed to initialize Whisper: {e}")
-            self.model = None
+            perf_logger.stop_timer("whisper_model_loading")
+            logger.error(f"Failed to load Whisper model: {e}")
+            return None
+    
+    @property
+    def model(self):
+        """Lazily loaded Whisper model."""
+        return self._model_loader.load()
+    
+    def unload_model(self) -> None:
+        """Unload model to free memory."""
+        logger.info("Unloading Whisper model")
+        self._model_loader.unload()
+        model_registry.unload("whisper_model")
+    
+    def cleanup(self) -> None:
+        """Comprehensive cleanup of all resources."""
+        logger.info("Performing comprehensive cleanup of SpeechRecognizer")
+        
+        # Unload model
+        self.unload_model()
+        
+        # Save language cache before cleanup
+        self._save_language_cache()
+        
+        # Clean up VAD processor if it exists
+        if self.vad_processor:
+            try:
+                if hasattr(self.vad_processor, 'cleanup'):
+                    self.vad_processor.cleanup()
+            except Exception as e:
+                logger.warning(f"Failed to cleanup VAD processor: {e}")
+        
+        # Check for memory pressure and trigger cleanup if needed
+        if cleanup_manager.check_memory_pressure():
+            cleanup_manager.periodic_cleanup()
+        
+        logger.info("SpeechRecognizer cleanup completed")
     
     def transcribe(
         self,

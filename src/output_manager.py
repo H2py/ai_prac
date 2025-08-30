@@ -8,14 +8,22 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
+from enum import Enum
 
 from src.utils.logger import PerformanceLogger
 from config.settings import Config
-
-# Import new architecture components
-from src.output import OutputPipeline, DataTransformer, OutputFormat
 from src.models import AnalysisResults, MediaInfo, ProcessingMetadata
 from src.models.segments import SpeakerSegment, TranscriptionSegment, EmotionSegment, AcousticSegment
+
+
+class OutputFormat(Enum):
+    """Supported output formats."""
+    JSON = "json"
+    ASS = "ass" 
+    VTT = "vtt"
+    SRT = "srt"
+    BACKEND_API = "backend_api"
+    FRONTEND_JSON = "frontend_json"
 
 logger = logging.getLogger(__name__)
 perf_logger = PerformanceLogger(logger)
